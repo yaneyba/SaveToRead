@@ -76,7 +76,20 @@ export class ApiDataProvider implements IDataProvider {
 
       clearTimeout(timeoutId);
 
-      const result: ApiResponse<T> = await response.json();
+      // Try to parse JSON response
+      let result: ApiResponse<T>;
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        // Handle non-JSON or empty responses
+        return {
+          success: false,
+          error: {
+            code: 'INVALID_RESPONSE',
+            message: `Server returned invalid JSON response (status ${response.status})`
+          }
+        };
+      }
 
       if (!response.ok) {
         return {
