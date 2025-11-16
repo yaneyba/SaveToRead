@@ -40,10 +40,15 @@ app.get('/health', (c) => {
 });
 
 // Public routes (no auth required)
-app.route('/auth', authRoutes);
+app.route('/api/auth', authRoutes);
 
 // Protected routes (auth required)
-app.use('/api/*', authMiddleware);
+app.use('/api/articles/*', authMiddleware);
+app.use('/api/storage/*', authMiddleware);
+app.use('/api/subscription/*', authMiddleware);
+app.use('/api/settings/*', authMiddleware);
+app.use('/api/analytics/*', authMiddleware);
+
 app.route('/api/articles', articleRoutes);
 app.route('/api/storage', storageRoutes);
 app.route('/api/subscription', subscriptionRoutes);
