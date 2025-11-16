@@ -17,7 +17,6 @@ import type {
   CreateAnnotationInput,
   StorageConnection,
   StorageProvider,
-  OAuthCredentials,
   Subscription,
   UserSettings,
   UserAnalytics,

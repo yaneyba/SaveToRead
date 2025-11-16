@@ -12,7 +12,7 @@ export const errorHandler: ErrorHandler = (err, c) => {
     error: {
       code: 'INTERNAL_ERROR',
       message: err.message || 'An internal error occurred',
-      details: process.env.NODE_ENV === 'development' ? { stack: err.stack } : undefined
+      
     }
   }, 500);
 };

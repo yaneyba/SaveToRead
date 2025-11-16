@@ -5,11 +5,11 @@
  */
 
 export class RateLimiter {
-  private state: DurableObjectState;
+  
   private requests: Map<string, number[]> = new Map();
 
-  constructor(state: DurableObjectState) {
-    this.state = state;
+  constructor(_state: DurableObjectState) {
+    // State not used in this simple implementation
   }
 
   async fetch(request: Request): Promise<Response> {

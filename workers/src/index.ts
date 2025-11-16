@@ -7,7 +7,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import type { Env, Context } from './types/env';
+import type { Env } from './types/env';
 
 // Route handlers
 import { authRoutes } from './routes/auth';
