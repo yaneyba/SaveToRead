@@ -26,6 +26,9 @@ export interface Env {
   APP_URL: string;
   API_URL: string;
   ENCRYPTION_KEY: string;
+
+  // Index signature required by Hono's Bindings type
+  [key: string]: unknown;
 }
 
 export interface Context {

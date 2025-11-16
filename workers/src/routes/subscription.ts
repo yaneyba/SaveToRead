@@ -7,6 +7,7 @@
 import { Hono } from 'hono';
 import type { Env } from '../types/env';
 import type { Subscription } from '@readitlater/shared';
+import { SubscriptionTier, SubscriptionStatus } from '@readitlater/shared';
 
 const app = new Hono<{ Bindings: Env; Variables: { userId?: string } }>();
 
@@ -24,8 +25,8 @@ app.get('/', async (c) => {
     const subscription: Subscription = {
       id: 'sub-1',
       userId,
-      tier: 'free',
-      status: 'active',
+      tier: SubscriptionTier.FREE,
+      status: SubscriptionStatus.ACTIVE,
       currentPeriodStart: new Date().toISOString(),
       currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       cancelAtPeriodEnd: false,
