@@ -1,0 +1,42 @@
+{
+  "name": "readitlater",
+  "version": "1.0.0",
+  "description": "Modern read-it-later application with cloud storage integration",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "workers",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend",
+    "dev:workers": "npm run dev --workspace=workers",
+    "build": "npm run build --workspaces",
+    "type-check": "npm run type-check --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "deploy:frontend": "npm run deploy --workspace=frontend",
+    "deploy:workers": "npm run deploy --workspace=workers"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yaneyba/ReadItLater.git"
+  },
+  "keywords": [
+    "read-it-later",
+    "bookmarking",
+    "cloudflare-workers",
+    "vite",
+    "react",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT"
+}

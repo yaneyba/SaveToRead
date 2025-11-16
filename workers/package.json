@@ -1,0 +1,23 @@
+{
+  "name": "@readitlater/workers",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers for ReadItLater API",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@readitlater/shared": "*",
+    "hono": "^3.12.0",
+    "jose": "^5.2.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0",
+    "wrangler": "^3.22.1"
+  }
+}

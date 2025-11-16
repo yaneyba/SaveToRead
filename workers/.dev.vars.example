@@ -1,0 +1,23 @@
+# JWT Secret for signing tokens
+JWT_SECRET=your-jwt-secret-here-change-in-production
+
+# OAuth Credentials
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+DROPBOX_CLIENT_ID=your-dropbox-client-id
+DROPBOX_CLIENT_SECRET=your-dropbox-client-secret
+
+ONEDRIVE_CLIENT_ID=your-onedrive-client-id
+ONEDRIVE_CLIENT_SECRET=your-onedrive-client-secret
+
+# Stripe
+STRIPE_SECRET_KEY=sk_test_your-stripe-secret-key
+STRIPE_WEBHOOK_SECRET=whsec_your-webhook-secret
+
+# Application URLs
+APP_URL=http://localhost:3000
+API_URL=http://localhost:8787
+
+# Encryption key for OAuth tokens
+ENCRYPTION_KEY=your-32-char-encryption-key-here

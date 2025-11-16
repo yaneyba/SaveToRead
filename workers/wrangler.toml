@@ -1,0 +1,47 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "readitlater-api"
+main = "src/index.ts"
+compatibility_date = "2023-12-18"
+
+# KV Namespaces
+[[kv_namespaces]]
+binding = "ARTICLES"
+id = "articles_kv_namespace_id"
+preview_id = "articles_kv_preview_id"
+
+[[kv_namespaces]]
+binding = "USERS"
+id = "users_kv_namespace_id"
+preview_id = "users_kv_preview_id"
+
+[[kv_namespaces]]
+binding = "OAUTH_TOKENS"
+id = "oauth_tokens_kv_namespace_id"
+preview_id = "oauth_tokens_preview_id"
+
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "sessions_kv_namespace_id"
+preview_id = "sessions_preview_id"
+
+# Durable Objects for rate limiting and real-time features
+[[durable_objects.bindings]]
+name = "RATE_LIMITER"
+class_name = "RateLimiter"
+script_name = "readitlater-api"
+
+[[durable_objects.bindings]]
+name = "READING_SESSION"
+class_name = "ReadingSession"
+script_name = "readitlater-api"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["RateLimiter", "ReadingSession"]
+
+# Environment variables (use .dev.vars for local development)
+[env.production]
+name = "readitlater-api-prod"
+
+[env.staging]
+name = "readitlater-api-staging"
