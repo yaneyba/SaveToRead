@@ -168,7 +168,7 @@ export class ApiDataProvider implements IDataProvider {
   // ============================================================================
 
   async signIn(email: string, password: string): Promise<ApiResponse<{ user: User; token: string }>> {
-    const result = await this.post<{ user: User; token: string }>('/auth/signin', {
+    const result = await this.post<{ user: User; token: string }>('/api/auth/signin', {
       email,
       password
     });
@@ -181,7 +181,7 @@ export class ApiDataProvider implements IDataProvider {
   }
 
   async signUp(email: string, password: string, displayName: string): Promise<ApiResponse<{ user: User; token: string }>> {
-    const result = await this.post<{ user: User; token: string }>('/auth/signup', {
+    const result = await this.post<{ user: User; token: string }>('/api/auth/signup', {
       email,
       password,
       displayName
@@ -195,17 +195,17 @@ export class ApiDataProvider implements IDataProvider {
   }
 
   async signOut(): Promise<ApiResponse<void>> {
-    const result = await this.post<void>('/auth/signout');
+    const result = await this.post<void>('/api/auth/signout');
     this.setAuthToken(null);
     return result;
   }
 
   async getCurrentUser(): Promise<ApiResponse<User>> {
-    return this.get<User>('/auth/me');
+    return this.get<User>('/api/auth/me');
   }
 
   async refreshToken(): Promise<ApiResponse<{ token: string }>> {
-    const result = await this.post<{ token: string }>('/auth/refresh');
+    const result = await this.post<{ token: string }>('/api/auth/refresh');
 
     if (result.success && result.data) {
       this.setAuthToken(result.data.token);
@@ -219,27 +219,27 @@ export class ApiDataProvider implements IDataProvider {
   // ============================================================================
 
   async listArticles(params?: ListArticlesParams): Promise<ApiResponse<PaginatedResponse<Article>>> {
-    return this.get<PaginatedResponse<Article>>('/articles', params as Record<string, unknown>);
+    return this.get<PaginatedResponse<Article>>('/api/articles', params as Record<string, unknown>);
   }
 
   async getArticle(id: string): Promise<ApiResponse<Article>> {
-    return this.get<Article>(`/articles/${id}`);
+    return this.get<Article>(`/api/articles/${id}`);
   }
 
   async createArticle(input: CreateArticleInput): Promise<ApiResponse<Article>> {
-    return this.post<Article>('/articles', input);
+    return this.post<Article>('/api/articles', input);
   }
 
   async updateArticle(id: string, input: UpdateArticleInput): Promise<ApiResponse<Article>> {
-    return this.put<Article>(`/articles/${id}`, input);
+    return this.put<Article>(`/api/articles/${id}`, input);
   }
 
   async deleteArticle(id: string): Promise<ApiResponse<void>> {
-    return this.delete<void>(`/articles/${id}`);
+    return this.delete<void>(`/api/articles/${id}`);
   }
 
   async generateSnapshot(articleId: string, format: 'pdf' | 'html'): Promise<ApiResponse<{ url: string }>> {
-    return this.post<{ url: string }>(`/articles/${articleId}/snapshot`, { format });
+    return this.post<{ url: string }>(`/api/articles/${articleId}/snapshot`, { format });
   }
 
   // ============================================================================
@@ -247,19 +247,19 @@ export class ApiDataProvider implements IDataProvider {
   // ============================================================================
 
   async getAnnotations(articleId: string): Promise<ApiResponse<Annotation[]>> {
-    return this.get<Annotation[]>(`/articles/${articleId}/annotations`);
+    return this.get<Annotation[]>(`/api/articles/${articleId}/annotations`);
   }
 
   async createAnnotation(input: CreateAnnotationInput): Promise<ApiResponse<Annotation>> {
-    return this.post<Annotation>('/annotations', input);
+    return this.post<Annotation>('/api/annotations', input);
   }
 
   async updateAnnotation(id: string, updates: Partial<Annotation>): Promise<ApiResponse<Annotation>> {
-    return this.put<Annotation>(`/annotations/${id}`, updates);
+    return this.put<Annotation>(`/api/annotations/${id}`, updates);
   }
 
   async deleteAnnotation(id: string): Promise<ApiResponse<void>> {
-    return this.delete<void>(`/annotations/${id}`);
+    return this.delete<void>(`/api/annotations/${id}`);
   }
 
   // ============================================================================
@@ -267,11 +267,11 @@ export class ApiDataProvider implements IDataProvider {
   // ============================================================================
 
   async getStorageConnections(): Promise<ApiResponse<StorageConnection[]>> {
-    return this.get<StorageConnection[]>('/storage/connections');
+    return this.get<StorageConnection[]>('/api/storage/connections');
   }
 
   async initiateStorageOAuth(provider: StorageProvider): Promise<ApiResponse<{ authUrl: string; state: string }>> {
-    return this.post<{ authUrl: string; state: string }>('/storage/oauth/initiate', { provider });
+    return this.post<{ authUrl: string; state: string }>('/api/storage/oauth/initiate', { provider });
   }
 
   async completeStorageOAuth(
@@ -279,7 +279,7 @@ export class ApiDataProvider implements IDataProvider {
     code: string,
     state: string
   ): Promise<ApiResponse<StorageConnection>> {
-    return this.post<StorageConnection>('/storage/oauth/callback', {
+    return this.post<StorageConnection>('/api/storage/oauth/callback', {
       provider,
       code,
       state
@@ -287,11 +287,11 @@ export class ApiDataProvider implements IDataProvider {
   }
 
   async disconnectStorage(connectionId: string): Promise<ApiResponse<void>> {
-    return this.delete<void>(`/storage/connections/${connectionId}`);
+    return this.delete<void>(`/api/storage/connections/${connectionId}`);
   }
 
   async syncStorageQuota(connectionId: string): Promise<ApiResponse<StorageConnection>> {
-    return this.post<StorageConnection>(`/storage/connections/${connectionId}/sync`);
+    return this.post<StorageConnection>(`/api/storage/connections/${connectionId}/sync`);
   }
 
   // ============================================================================
@@ -299,19 +299,19 @@ export class ApiDataProvider implements IDataProvider {
   // ============================================================================
 
   async getSubscription(): Promise<ApiResponse<Subscription>> {
-    return this.get<Subscription>('/subscription');
+    return this.get<Subscription>('/api/subscription');
   }
 
   async createCheckoutSession(priceId: string): Promise<ApiResponse<{ sessionId: string; url: string }>> {
-    return this.post<{ sessionId: string; url: string }>('/subscription/checkout', { priceId });
+    return this.post<{ sessionId: string; url: string }>('/api/subscription/checkout', { priceId });
   }
 
   async createPortalSession(): Promise<ApiResponse<{ url: string }>> {
-    return this.post<{ url: string }>('/subscription/portal');
+    return this.post<{ url: string }>('/api/subscription/portal');
   }
 
   async cancelSubscription(): Promise<ApiResponse<Subscription>> {
-    return this.post<Subscription>('/subscription/cancel');
+    return this.post<Subscription>('/api/subscription/cancel');
   }
 
   // ============================================================================
@@ -319,11 +319,11 @@ export class ApiDataProvider implements IDataProvider {
   // ============================================================================
 
   async getSettings(): Promise<ApiResponse<UserSettings>> {
-    return this.get<UserSettings>('/settings');
+    return this.get<UserSettings>('/api/settings');
   }
 
   async updateSettings(settings: Partial<UserSettings>): Promise<ApiResponse<UserSettings>> {
-    return this.put<UserSettings>('/settings', settings);
+    return this.put<UserSettings>('/api/settings', settings);
   }
 
   // ============================================================================
@@ -331,11 +331,11 @@ export class ApiDataProvider implements IDataProvider {
   // ============================================================================
 
   async getAnalytics(): Promise<ApiResponse<UserAnalytics>> {
-    return this.get<UserAnalytics>('/analytics');
+    return this.get<UserAnalytics>('/api/analytics');
   }
 
   async trackReadingProgress(articleId: string, progress: number): Promise<ApiResponse<void>> {
-    return this.post<void>('/analytics/reading-progress', { articleId, progress });
+    return this.post<void>('/api/analytics/reading-progress', { articleId, progress });
   }
 
   // ============================================================================
@@ -343,10 +343,10 @@ export class ApiDataProvider implements IDataProvider {
   // ============================================================================
 
   async getTags(): Promise<ApiResponse<string[]>> {
-    return this.get<string[]>('/tags');
+    return this.get<string[]>('/api/tags');
   }
 
   async getTagStats(): Promise<ApiResponse<Record<string, number>>> {
-    return this.get<Record<string, number>>('/tags/stats');
+    return this.get<Record<string, number>>('/api/tags/stats');
   }
 }

@@ -43,7 +43,7 @@ export class DataProviderFactory {
     switch (type) {
       case DataProviderType.API:
         return new ApiDataProvider({
-          baseUrl: import.meta.env.VITE_API_URL || '/api',
+          baseUrl: import.meta.env.VITE_API_URL || '',
           timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000', 10)
         });
 
