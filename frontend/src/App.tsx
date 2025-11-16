@@ -6,23 +6,23 @@
 
 import { AuthProvider } from './components/AuthProvider';
 import { ArticleList } from './components/ArticleList';
+import { LandingPage } from './pages/LandingPage';
 import { useAuth } from './hooks/useAuth';
 
 function AppContent() {
   const { user, loading, signOut } = useAuth();
 
   if (loading) {
-    return <div className="app-loading">Loading...</div>;
+    return (
+      <div className="app-loading">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   if (!user) {
-    return (
-      <div className="auth-page">
-        <h1>Welcome to ReadItLater</h1>
-        <p>Please sign in to continue</p>
-        {/* Sign in form would go here */}
-      </div>
-    );
+    return <LandingPage />;
   }
 
   return (
