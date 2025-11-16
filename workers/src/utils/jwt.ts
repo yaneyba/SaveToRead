@@ -38,5 +38,15 @@ export async function verify(token: string, secret: string): Promise<JWTPayload>
 
   const { payload } = await jose.jwtVerify(token, secretKey);
 
-  return payload as JWTPayload;
+  // Validate and convert jose.JWTPayload to our JWTPayload type
+  if (typeof payload.userId !== 'string' || typeof payload.email !== 'string') {
+    throw new Error('Invalid token payload: missing userId or email');
+  }
+
+  return {
+    userId: payload.userId,
+    email: payload.email,
+    iat: payload.iat,
+    exp: payload.exp
+  };
 }
