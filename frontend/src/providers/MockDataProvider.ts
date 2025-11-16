@@ -15,13 +15,16 @@ import type {
   Annotation,
   CreateAnnotationInput,
   StorageConnection,
-  StorageProvider,
   Subscription,
   UserSettings,
   UserAnalytics,
-  ApiResponse,
+  ApiResponse
+} from '@readitlater/shared';
+import {
   SubscriptionTier,
-  SubscriptionStatus
+  SubscriptionStatus,
+  StorageProvider,
+  AnnotationType
 } from '@readitlater/shared';
 import { IDataProvider } from './IDataProvider';
 
@@ -58,11 +61,11 @@ export class MockDataProvider implements IDataProvider {
   }
 
   // Authentication
-  async signIn(email: string, password: string): Promise<ApiResponse<{ user: User; token: string }>> {
+  async signIn(_email: string, _password: string): Promise<ApiResponse<{ user: User; token: string }>> {
     return this.mockResponse({ user: this.mockUser, token: 'mock-token' });
   }
 
-  async signUp(email: string, password: string, displayName: string): Promise<ApiResponse<{ user: User; token: string }>> {
+  async signUp(email: string, _password: string, displayName: string): Promise<ApiResponse<{ user: User; token: string }>> {
     return this.mockResponse({ user: { ...this.mockUser, email, displayName }, token: 'mock-token' });
   }
 
@@ -133,7 +136,7 @@ export class MockDataProvider implements IDataProvider {
   }
 
   // Annotations
-  async getAnnotations(articleId: string): Promise<ApiResponse<Annotation[]>> {
+  async getAnnotations(_articleId: string): Promise<ApiResponse<Annotation[]>> {
     return this.mockResponse([]);
   }
 
@@ -153,12 +156,12 @@ export class MockDataProvider implements IDataProvider {
     return this.mockResponse(annotation);
   }
 
-  async updateAnnotation(id: string, updates: Partial<Annotation>): Promise<ApiResponse<Annotation>> {
+  async updateAnnotation(_id: string, updates: Partial<Annotation>): Promise<ApiResponse<Annotation>> {
     const annotation: Annotation = {
-      id,
+      id: `annotation-${Date.now()}`,
       articleId: 'mock-article',
       userId: this.mockUser.id,
-      type: updates.type || 'highlight',
+      type: updates.type || AnnotationType.HIGHLIGHT,
       text: updates.text || '',
       position: updates.position || { startOffset: 0, endOffset: 0 },
       createdAt: new Date().toISOString(),
@@ -167,7 +170,7 @@ export class MockDataProvider implements IDataProvider {
     return this.mockResponse(annotation);
   }
 
-  async deleteAnnotation(id: string): Promise<ApiResponse<void>> {
+  async deleteAnnotation(_id: string): Promise<ApiResponse<void>> {
     return this.mockResponse(undefined);
   }
 
@@ -183,7 +186,7 @@ export class MockDataProvider implements IDataProvider {
     });
   }
 
-  async completeStorageOAuth(provider: StorageProvider, code: string, state: string): Promise<ApiResponse<StorageConnection>> {
+  async completeStorageOAuth(provider: StorageProvider, _code: string, _state: string): Promise<ApiResponse<StorageConnection>> {
     const connection: StorageConnection = {
       id: `connection-${Date.now()}`,
       userId: this.mockUser.id,
@@ -198,7 +201,7 @@ export class MockDataProvider implements IDataProvider {
     return this.mockResponse(connection);
   }
 
-  async disconnectStorage(connectionId: string): Promise<ApiResponse<void>> {
+  async disconnectStorage(_connectionId: string): Promise<ApiResponse<void>> {
     return this.mockResponse(undefined);
   }
 
@@ -235,7 +238,7 @@ export class MockDataProvider implements IDataProvider {
     return this.mockResponse(subscription);
   }
 
-  async createCheckoutSession(priceId: string): Promise<ApiResponse<{ sessionId: string; url: string }>> {
+  async createCheckoutSession(_priceId: string): Promise<ApiResponse<{ sessionId: string; url: string }>> {
     return this.mockResponse({
       sessionId: 'mock-session-id',
       url: 'https://checkout.stripe.com/mock-session'
@@ -269,7 +272,7 @@ export class MockDataProvider implements IDataProvider {
     return this.mockResponse(settings);
   }
 
-  async updateSettings(settings: Partial<UserSettings>): Promise<ApiResponse<UserSettings>> {
+  async updateSettings(_settings: Partial<UserSettings>): Promise<ApiResponse<UserSettings>> {
     return this.getSettings();
   }
 
@@ -287,7 +290,7 @@ export class MockDataProvider implements IDataProvider {
     return this.mockResponse(analytics);
   }
 
-  async trackReadingProgress(articleId: string, progress: number): Promise<ApiResponse<void>> {
+  async trackReadingProgress(_articleId: string, _progress: number): Promise<ApiResponse<void>> {
     return this.mockResponse(undefined);
   }
 
