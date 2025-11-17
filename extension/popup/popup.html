@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SaveToRead</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>SaveToRead</h1>
+    </div>
+
+    <!-- Not Logged In State -->
+    <div id="not-logged-in" class="state" style="display: none;">
+      <div class="message">
+        <p>Please log in to save articles</p>
+      </div>
+      <button id="login-btn" class="btn btn-primary">
+        Log In
+      </button>
+    </div>
+
+    <!-- Logged In State -->
+    <div id="logged-in" class="state" style="display: none;">
+      <div class="current-page">
+        <h3 id="page-title">Current Page</h3>
+        <p id="page-url" class="url-text"></p>
+      </div>
+
+      <button id="save-page-btn" class="btn btn-primary">
+        <span class="icon">📚</span>
+        Save This Page
+      </button>
+
+      <div class="divider"></div>
+
+      <div class="quick-actions">
+        <button id="view-articles-btn" class="btn btn-secondary">
+          View My Articles
+        </button>
+        <button id="logout-btn" class="btn btn-text">
+          Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="state">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+    <!-- Success Message -->
+    <div id="success-message" class="message success" style="display: none;">
+      <span class="icon">✓</span>
+      <span id="success-text">Article saved successfully!</span>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error-message" class="message error" style="display: none;">
+      <span class="icon">⚠</span>
+      <span id="error-text">Something went wrong</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

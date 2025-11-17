@@ -56,3 +56,8 @@ temp/
 secrets.json
 credentials.json
 service-account.json
+
+# Extension
+extension/*.zip
+extension/icons/*.png
+!extension/icons/README.md

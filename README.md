@@ -52,6 +52,11 @@ SaveToRead/
 │   │       └── index.ts   # TypeScript interfaces & types
 │   ├── dist/              # Compiled types (gitignored)
 │   └── package.json       # Shared package config
+├── extension/             # Browser extension
+│   ├── manifest.json      # Extension manifest (v3)
+│   ├── background.js      # Service worker
+│   ├── popup/             # Extension popup UI
+│   └── icons/             # Extension icons
 └── docs/                  # Documentation
     ├── ARCHITECTURE.md
     ├── DEPLOYMENT.md
@@ -65,6 +70,7 @@ SaveToRead/
 
 ### Core Features
 - 📚 Save and organize articles with tags
+- 🖱️ **Browser extension** with right-click context menu
 - 📄 Offline snapshots (PDF/HTML) stored in user's cloud storage
 - ✍️ Reading interface with annotations and highlights
 - 🔄 Progress synchronization across devices
