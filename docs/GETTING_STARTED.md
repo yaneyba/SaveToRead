@@ -6,12 +6,14 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/SaveToRead.git
+git clone https://github.com/yaneyba/SaveToRead.git
 cd SaveToRead
 
-# Install root dependencies
+# Install ALL workspace dependencies with one command
 npm install
 ```
+
+> **NPM Workspaces**: This project uses npm workspaces. A single `npm install` at the root installs dependencies for frontend, workers, and shared packages into a single hoisted `node_modules` directory.
 
 ### 2. Set Up Development Environment
 
@@ -79,23 +81,31 @@ VITE_STRIPE_PUBLIC_KEY=pk_test_your-test-key
 
 **Terminal 1 - Workers:**
 ```bash
-cd workers
-npm install
-npm run dev
+# From root
+npm run dev:workers
 # API running at http://localhost:8787
+
+# Or from workers directory
+cd workers
+npm run dev
 ```
 
 **Terminal 2 - Frontend:**
 ```bash
-cd frontend
-npm install
+# From root
 npm run dev
-# App running at http://localhost:3000
+# App running at http://localhost:5173 (Vite default)
+
+# Or from frontend directory
+cd frontend
+npm run dev
 ```
+
+> **Note**: No need to run `npm install` in subdirectories - workspaces handle this automatically!
 
 ### 4. Test the Application
 
-Open http://localhost:3000 in your browser.
+Open http://localhost:5173 in your browser.
 
 **Create an account:**
 1. Click "Sign Up"
@@ -380,7 +390,7 @@ wrangler tail --status error
 
 ## Getting Help
 
-- Check [GitHub Issues](https://github.com/yourusername/SaveToRead/issues)
+- Check [GitHub Issues](https://github.com/yaneyba/SaveToRead/issues)
 - Read [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
 - Consult [Hono Documentation](https://hono.dev/)
 - Review [React Documentation](https://react.dev/)

@@ -1,6 +1,6 @@
 # SaveToRead - Modern Save-To-Read Application
 
-A full-stack save-to-read application built with Vite, React, TypeScript, and Cloudflare Workers.
+A full-stack save-to-read application built with Vite, React, TypeScript, and Cloudflare Workers using an npm workspaces monorepo architecture.
 
 ## Architecture
 
@@ -11,31 +11,53 @@ A full-stack save-to-read application built with Vite, React, TypeScript, and Cl
 - **Data Access**: DataProvider Factory Pattern
 
 ### Backend
-- **Runtime**: Cloudflare Workers
-- **Storage**: Workers KV + Durable Objects
+- **Runtime**: Cloudflare Workers with Hono framework
+- **Storage**: Cloudflare KV + Durable Objects
 - **OAuth Providers**: Google Drive, Dropbox, OneDrive
 - **Payments**: Stripe Integration
+
+### Monorepo Structure (NPM Workspaces)
+- **Single `node_modules`** at root for all workspaces
+- **Shared types** package used by frontend and workers
+- **Consistent versioning** across all dependencies
 
 ## Project Structure
 
 ```
 SaveToRead/
-├── frontend/              # Vite + React frontend
+├── node_modules/          # Hoisted dependencies (all workspaces)
+├── package.json           # Root package with workspace config
+├── package-lock.json      # Lockfile for all workspaces
+├── frontend/              # Vite + React frontend workspace
 │   ├── src/
 │   │   ├── components/    # React components
 │   │   ├── providers/     # Data provider implementations
 │   │   ├── hooks/         # Custom React hooks
 │   │   ├── pages/         # Page components
-│   │   └── types/         # TypeScript types
-│   └── public/
-├── workers/               # Cloudflare Workers
-│   ├── api/              # API endpoints
-│   ├── auth/             # Authentication workers
-│   ├── oauth/            # OAuth flow handlers
-│   └── storage/          # Storage proxy workers
-├── shared/               # Shared types and utilities
-│   └── types/
-└── docs/                 # Documentation
+│   │   └── App.tsx        # Main app component
+│   ├── dist/              # Build output (gitignored)
+│   ├── package.json       # Frontend dependencies
+│   └── vite.config.ts     # Vite configuration
+├── workers/               # Cloudflare Workers workspace
+│   ├── src/
+│   │   ├── routes/        # API routes (Hono)
+│   │   ├── services/      # Business logic
+│   │   ├── middleware/    # Auth & validation middleware
+│   │   └── index.ts       # Worker entry point
+│   ├── wrangler.toml      # Cloudflare Workers config
+│   └── package.json       # Workers dependencies
+├── shared/                # Shared types workspace
+│   ├── src/
+│   │   └── types/
+│   │       └── index.ts   # TypeScript interfaces & types
+│   ├── dist/              # Compiled types (gitignored)
+│   └── package.json       # Shared package config
+└── docs/                  # Documentation
+    ├── ARCHITECTURE.md
+    ├── DEPLOYMENT.md
+    ├── GETTING_STARTED.md
+    ├── SECURITY.md
+    └── LANDING_PAGE.md
 
 ```
 
@@ -57,62 +79,111 @@ SaveToRead/
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+
-- npm or pnpm
-- Wrangler CLI (Cloudflare Workers)
-- Cloudflare account
+- **Node.js** 18+ (with npm)
+- **Wrangler CLI** for Cloudflare Workers
+- **Cloudflare account** (free tier works)
 
 ### Installation
 
 ```bash
-# Install dependencies
+# Clone repository
+git clone https://github.com/yaneyba/SaveToRead.git
+cd SaveToRead
+
+# Install all workspace dependencies (single command!)
 npm install
-
-# Frontend development
-cd frontend
-npm run dev
-
-# Workers development
-cd workers
-wrangler dev
 ```
 
-### Environment Variables
+> **Note**: With npm workspaces, a single `npm install` at the root installs dependencies for all workspaces (frontend, workers, shared) into one `node_modules` directory.
 
-See `.env.example` files in respective directories.
+### Environment Setup
+
+**Frontend** (`frontend/.env`):
+```bash
+cd frontend
+cp .env.example .env
+# Edit .env with your API URL and OAuth client IDs
+```
+
+**Workers** (`workers/.dev.vars`):
+```bash
+cd workers
+cp .dev.vars.example .dev.vars
+# Edit .dev.vars with your secrets and API keys
+```
 
 ## Development
 
-### Frontend Development
+### Start Development Servers
+
+**Option 1: Run from root using npm workspaces**
 ```bash
+# Frontend (from root)
+npm run dev
+
+# Workers (from root, separate terminal)
+npm run dev:workers
+```
+
+**Option 2: Run from individual workspaces**
+```bash
+# Terminal 1 - Frontend
 cd frontend
 npm run dev
-```
+# Runs on http://localhost:5173
 
-### Workers Development
-```bash
+# Terminal 2 - Workers
 cd workers
-wrangler dev
+npm run dev
+# Runs on http://localhost:8787
 ```
 
-### Type Checking
+### Build & Type Checking
+
 ```bash
+# Build all workspaces
+npm run build
+
+# Type check all workspaces
 npm run type-check
+
+# Lint all workspaces
+npm run lint
 ```
 
 ## Deployment
 
-### Frontend (Cloudflare Pages)
+### Deploy Everything
+
 ```bash
-cd frontend
-npm run build
-wrangler pages deploy dist
+# From root - deploys both frontend and workers
+npm run deploy:frontend
+npm run deploy:workers
 ```
 
-### Workers
+### Frontend (Cloudflare Pages)
 ```bash
+# Build and deploy
+npm run deploy:frontend
+
+# Or manually
+cd frontend
+npm run build
+wrangler pages deploy dist --project-name=savetoread
+```
+
+**Production URLs:**
+- Frontend: https://savetoread.pages.dev
+- Workers API: https://savetoread-api.yeb404974.workers.dev
+
+### Workers (Cloudflare Workers)
+```bash
+# Deploy from root
+npm run deploy:workers
+
+# Or from workers directory
 cd workers
-wrangler deploy
+npm run deploy
 ```
 
 ## Security Best Practices

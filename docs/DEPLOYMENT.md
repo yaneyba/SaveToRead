@@ -36,10 +36,14 @@ git --version
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/SaveToRead.git
+git clone https://github.com/yaneyba/SaveToRead.git
 cd SaveToRead
+
+# Install all workspace dependencies with one command
 npm install
 ```
+
+> **NPM Workspaces**: This project uses npm workspaces for dependency management. All packages are installed in a single root `node_modules` directory.
 
 ### 2. Configure OAuth Applications
 
@@ -193,18 +197,24 @@ wrangler secret put ENCRYPTION_KEY
 
 #### Start Frontend
 ```bash
-cd frontend
-npm install
+# From root
 npm run dev
-# Runs on http://localhost:3000
+# Runs on http://localhost:5173
+
+# Or from frontend directory
+cd frontend
+npm run dev
 ```
 
 #### Start Workers
 ```bash
-cd workers
-npm install
-wrangler dev
+# From root
+npm run dev:workers
 # Runs on http://localhost:8787
+
+# Or from workers directory
+cd workers
+npm run dev
 ```
 
 ### Production Deployment
@@ -212,52 +222,61 @@ wrangler dev
 #### 1. Deploy Workers
 
 ```bash
-cd workers
+# From root
+npm run deploy:workers
 
-# Build and deploy
+# Or from workers directory
+cd workers
 npm run deploy
 
-# Or deploy to specific environment
+# Deploy to specific environment
 wrangler deploy --env production
 ```
 
 **Verify deployment:**
 ```bash
-curl https://your-worker.your-subdomain.workers.dev/health
+curl https://savetoread-api.yeb404974.workers.dev/health
 ```
 
 #### 2. Deploy Frontend to Cloudflare Pages
 
-**Option A: Via Wrangler**
+**Option A: Via Wrangler (Recommended)**
 
 ```bash
+# From root
+npm run deploy:frontend
+
+# Or manually
 cd frontend
-
-# Build production bundle
 npm run build
-
-# Deploy to Pages
 wrangler pages deploy dist --project-name=savetoread
 ```
 
-**Option B: Via Git Integration**
+**Production URLs:**
+- Frontend: https://savetoread.pages.dev
+- Workers API: https://savetoread-api.yeb404974.workers.dev
+
+**Option B: Via Git Integration (Auto-deploy on push)**
 
 1. Go to Cloudflare Dashboard → Pages
-2. Create a new project
-3. Connect your Git repository
+2. Create a new project named `savetoread`
+3. Connect to GitHub repository: `yaneyba/SaveToRead`
 4. Configure build settings:
-   - Build command: `cd frontend && npm install && npm run build`
-   - Build output directory: `frontend/dist`
-   - Root directory: `/`
+   - **Build command**: `npm run build`
+   - **Build output directory**: `frontend/dist`
+   - **Root directory**: `/` (leave empty)
+   - **Production branch**: `main`
 5. Add environment variables:
    ```
-   VITE_API_URL=https://your-worker.your-subdomain.workers.dev
+   VITE_API_URL=https://savetoread-api.yeb404974.workers.dev
    VITE_GOOGLE_CLIENT_ID=...
    VITE_DROPBOX_CLIENT_ID=...
    VITE_ONEDRIVE_CLIENT_ID=...
    VITE_STRIPE_PUBLIC_KEY=...
    ```
 6. Deploy
+
+> **Note**: With Git integration enabled, every push to `main` triggers an automatic deployment.
 
 **Option C: Via GitHub Actions**
 
