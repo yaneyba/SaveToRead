@@ -1,6 +1,6 @@
-# SaveForLater - Modern Save-For-Later Application
+# SaveToRead - Modern Save-To-Read Application
 
-A full-stack save-for-later application built with Vite, React, TypeScript, and Cloudflare Workers.
+A full-stack save-to-read application built with Vite, React, TypeScript, and Cloudflare Workers.
 
 ## Architecture
 
@@ -19,7 +19,7 @@ A full-stack save-for-later application built with Vite, React, TypeScript, and 
 ## Project Structure
 
 ```
-SaveForLater/
+SaveToRead/
 ├── frontend/              # Vite + React frontend
 │   ├── src/
 │   │   ├── components/    # React components

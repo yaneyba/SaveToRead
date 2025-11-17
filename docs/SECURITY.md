@@ -2,7 +2,7 @@
 
 ## Overview
 
-Security is paramount in SaveForLater, especially given that we handle user authentication, OAuth tokens for cloud storage providers, and payment information. This document outlines the security measures implemented and best practices to follow.
+Security is paramount in SaveToRead, especially given that we handle user authentication, OAuth tokens for cloud storage providers, and payment information. This document outlines the security measures implemented and best practices to follow.
 
 ## Authentication & Authorization
 
@@ -153,7 +153,7 @@ authUrl += `&code_challenge=${codeChallenge}&code_challenge_method=S256`;
 ```typescript
 // ✅ Good: Whitelist allowed redirect URIs
 const allowedRedirects = [
-  'https://saveforlater.app/oauth/callback',
+  'https://savetoread.app/oauth/callback',
   'http://localhost:3000/oauth/callback' // Dev only
 ];
 
@@ -283,7 +283,7 @@ if (!response.ok) {
 ```typescript
 // ✅ Production: Whitelist specific origins
 app.use('*', cors({
-  origin: ['https://saveforlater.app'],
+  origin: ['https://savetoread.app'],
   credentials: true,
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowHeaders: ['Content-Type', 'Authorization']
@@ -326,7 +326,7 @@ c.header('Content-Security-Policy', [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://api.saveforlater.app",
+  "connect-src 'self' https://api.savetoread.app",
   "frame-src https://js.stripe.com"
 ].join('; '));
 ```

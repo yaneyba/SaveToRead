@@ -6,7 +6,7 @@
 
 import { Hono } from 'hono';
 import type { Env } from '../types/env';
-import type { Article, CreateArticleInput, UpdateArticleInput } from '@saveforlater/shared';
+import type { Article, CreateArticleInput, UpdateArticleInput } from '@savetoread/shared';
 
 const app = new Hono<{ Bindings: Env; Variables: { userId?: string } }>();
 

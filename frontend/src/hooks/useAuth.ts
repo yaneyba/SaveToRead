@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback, createContext, useContext } from 'react';
-import type { User } from '@saveforlater/shared';
+import type { User } from '@savetoread/shared';
 import { useDataProvider } from '../providers/DataProviderFactory';
 
 interface AuthContextValue {

@@ -1,4 +1,4 @@
-# Getting Started with SaveForLater
+# Getting Started with SaveToRead
 
 ## Quick Start
 
@@ -6,8 +6,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/SaveForLater.git
-cd SaveForLater
+git clone https://github.com/yourusername/SaveToRead.git
+cd SaveToRead
 
 # Install root dependencies
 npm install
@@ -110,7 +110,7 @@ Open http://localhost:3000 in your browser.
 ## Project Structure
 
 ```
-SaveForLater/
+SaveToRead/
 ├── frontend/              # React frontend
 │   ├── src/
 │   │   ├── components/    # React components
@@ -380,7 +380,7 @@ wrangler tail --status error
 
 ## Getting Help
 
-- Check [GitHub Issues](https://github.com/yourusername/SaveForLater/issues)
+- Check [GitHub Issues](https://github.com/yourusername/SaveToRead/issues)
 - Read [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
 - Consult [Hono Documentation](https://hono.dev/)
 - Review [React Documentation](https://react.dev/)

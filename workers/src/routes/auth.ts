@@ -6,7 +6,7 @@
 
 import { Hono } from 'hono';
 import type { Env } from '../types/env';
-import type { User, SubscriptionTier } from '@saveforlater/shared';
+import type { User, SubscriptionTier } from '@savetoread/shared';
 import { sign } from '../utils/jwt';
 import { hashPassword, verifyPassword } from '../utils/crypto';
 

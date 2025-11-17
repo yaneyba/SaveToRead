@@ -1,5 +1,5 @@
 #:schema node_modules/wrangler/config-schema.json
-name = "saveforlater-api"
+name = "savetoread-api"
 main = "src/index.ts"
 compatibility_date = "2023-12-18"
 
@@ -24,12 +24,12 @@ id = "bc9f80b569bd4bb6b8fac012fcbd79f7"
 [[durable_objects.bindings]]
 name = "RATE_LIMITER"
 class_name = "RateLimiter"
-script_name = "saveforlater-api"
+script_name = "savetoread-api"
 
 [[durable_objects.bindings]]
 name = "READING_SESSION"
 class_name = "ReadingSession"
-script_name = "saveforlater-api"
+script_name = "savetoread-api"
 
 [[migrations]]
 tag = "v1"
@@ -37,7 +37,7 @@ new_sqlite_classes = ["RateLimiter", "ReadingSession"]
 
 # Environment variables (use .dev.vars for local development)
 [env.production]
-name = "saveforlater-api-prod"
+name = "savetoread-api-prod"
 
 [env.staging]
-name = "saveforlater-api-staging"
+name = "savetoread-api-staging"

@@ -151,7 +151,7 @@ export class OneDriveOAuth {
     content: ArrayBuffer
   ): Promise<{ id: string; name: string; webUrl: string }> {
     const response = await fetch(
-      `https://graph.microsoft.com/v1.0/me/drive/root:/SaveForLater/${fileName}:/content`,
+      `https://graph.microsoft.com/v1.0/me/drive/root:/SaveToRead/${fileName}:/content`,
       {
         method: 'PUT',
         headers: {

@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import type { Article, ListArticlesParams, PaginatedResponse } from '@saveforlater/shared';
+import type { Article, ListArticlesParams, PaginatedResponse } from '@savetoread/shared';
 import { useDataProvider } from '../providers/DataProviderFactory';
 
 export function useArticles(params?: ListArticlesParams) {

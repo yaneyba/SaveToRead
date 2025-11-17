@@ -1,8 +1,8 @@
-# SaveForLater Architecture
+# SaveToRead Architecture
 
 ## Overview
 
-SaveForLater is a modern save-for-later application built with a serverless-first architecture using Cloudflare's edge computing platform. The application follows clean architecture principles with clear separation of concerns between frontend, backend, and data layers.
+SaveToRead is a modern save-to-read application built with a serverless-first architecture using Cloudflare's edge computing platform. The application follows clean architecture principles with clear separation of concerns between frontend, backend, and data layers.
 
 ## Technology Stack
 
