@@ -1,0 +1,11 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" rx="24" fill="#2563EB"/>
+
+  <!-- Bookmark icon -->
+  <path d="M40 32C40 29.7909 41.7909 28 44 28H84C86.2091 28 88 29.7909 88 32V96C88 98.7614 84.7614 100 82.5 100C81.0377 100 79.6515 99.2893 78.7929 98.0858L64 78L49.2071 98.0858C48.3485 99.2893 46.9623 100 45.5 100C43.2386 100 40 98.7614 40 96V32Z" fill="white"/>
+
+  <!-- Reading lines (decorative) -->
+  <path d="M54 48H74" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  <path d="M54 58H70" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+</svg>
