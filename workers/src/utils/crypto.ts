@@ -23,7 +23,7 @@ export async function encrypt(data: string, key: string): Promise<string> {
   const cryptoKey = await crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt: encoder.encode('readitlater-salt'),
+      salt: encoder.encode('saveforlater-salt'),
       iterations: 100000,
       hash: 'SHA-256'
     },
@@ -77,7 +77,7 @@ export async function decrypt(encryptedData: string, key: string): Promise<strin
   const cryptoKey = await crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt: encoder.encode('readitlater-salt'),
+      salt: encoder.encode('saveforlater-salt'),
       iterations: 100000,
       hash: 'SHA-256'
     },

@@ -17,7 +17,7 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@readitlater/shared": ["../shared/src/index.ts"]
+      "@saveforlater/shared": ["../shared/src/index.ts"]
     }
   },
   "include": ["src"],

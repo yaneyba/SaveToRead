@@ -6,7 +6,7 @@
 
 import { Hono } from 'hono';
 import type { Env } from '../types/env';
-import { StorageProvider } from '@readitlater/shared';
+import { StorageProvider } from '@saveforlater/shared';
 import { GoogleDriveOAuth } from '../services/oauth/google-drive';
 import { DropboxOAuth } from '../services/oauth/dropbox';
 import { OneDriveOAuth } from '../services/oauth/onedrive';

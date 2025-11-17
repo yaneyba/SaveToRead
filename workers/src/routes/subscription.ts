@@ -6,8 +6,8 @@
 
 import { Hono } from 'hono';
 import type { Env } from '../types/env';
-import type { Subscription } from '@readitlater/shared';
-import { SubscriptionTier, SubscriptionStatus } from '@readitlater/shared';
+import type { Subscription } from '@saveforlater/shared';
+import { SubscriptionTier, SubscriptionStatus } from '@saveforlater/shared';
 
 const app = new Hono<{ Bindings: Env; Variables: { userId?: string } }>();
 

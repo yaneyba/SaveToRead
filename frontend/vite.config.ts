@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@readitlater/shared': path.resolve(__dirname, '../shared/src/index.ts')
+      '@saveforlater/shared': path.resolve(__dirname, '../shared/src/index.ts')
     }
   },
   build: {

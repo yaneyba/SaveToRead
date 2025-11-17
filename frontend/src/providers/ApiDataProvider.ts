@@ -20,7 +20,7 @@ import type {
   UserSettings,
   UserAnalytics,
   ApiResponse
-} from '@readitlater/shared';
+} from '@saveforlater/shared';
 import { IDataProvider } from './IDataProvider';
 
 export interface ApiDataProviderConfig {

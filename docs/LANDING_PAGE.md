@@ -2,7 +2,7 @@
 
 ## Overview
 
-The ReadItLater landing page is a modern, conversion-optimized marketing page designed to showcase the application's features and drive user signups.
+The SaveForLater landing page is a modern, conversion-optimized marketing page designed to showcase the application's features and drive user signups.
 
 ## Structure
 
@@ -140,7 +140,7 @@ Dual-purpose authentication modal supporting both sign-in and sign-up flows.
 - Feature transparency
 
 ### User Journey
-1. **Awareness**: Hero explains what ReadItLater is
+1. **Awareness**: Hero explains what SaveForLater is
 2. **Interest**: Features showcase capabilities
 3. **Desire**: How It Works reduces friction
 4. **Action**: Multiple CTAs throughout page
@@ -154,8 +154,8 @@ Dual-purpose authentication modal supporting both sign-in and sign-up flows.
 
 ### On-Page SEO
 ```html
-<title>ReadItLater - Save Articles for Later</title>
-<meta name="description" content="Save and read articles later with ReadItLater" />
+<title>SaveForLater - Save Articles for Later</title>
+<meta name="description" content="Save and read articles later with SaveForLater" />
 ```
 
 ### Semantic HTML

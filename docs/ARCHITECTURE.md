@@ -1,8 +1,8 @@
-# ReadItLater Architecture
+# SaveForLater Architecture
 
 ## Overview
 
-ReadItLater is a modern read-it-later application built with a serverless-first architecture using Cloudflare's edge computing platform. The application follows clean architecture principles with clear separation of concerns between frontend, backend, and data layers.
+SaveForLater is a modern save-for-later application built with a serverless-first architecture using Cloudflare's edge computing platform. The application follows clean architecture principles with clear separation of concerns between frontend, backend, and data layers.
 
 ## Technology Stack
 

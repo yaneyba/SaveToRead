@@ -1,47 +1,43 @@
 #:schema node_modules/wrangler/config-schema.json
-name = "readitlater-api"
+name = "saveforlater-api"
 main = "src/index.ts"
 compatibility_date = "2023-12-18"
 
 # KV Namespaces
 [[kv_namespaces]]
 binding = "ARTICLES"
-id = "articles_kv_namespace_id"
-preview_id = "articles_kv_preview_id"
+id = "c969a9ce60db4dc4aadae9a5ed038dcc"
 
 [[kv_namespaces]]
 binding = "USERS"
-id = "users_kv_namespace_id"
-preview_id = "users_kv_preview_id"
+id = "5cd500cff447420987e259bd5e245597"
 
 [[kv_namespaces]]
 binding = "OAUTH_TOKENS"
-id = "oauth_tokens_kv_namespace_id"
-preview_id = "oauth_tokens_preview_id"
+id = "ffd14ea2556145b69bd1d69199c905a6"
 
 [[kv_namespaces]]
 binding = "SESSIONS"
-id = "sessions_kv_namespace_id"
-preview_id = "sessions_preview_id"
+id = "bc9f80b569bd4bb6b8fac012fcbd79f7"
 
 # Durable Objects for rate limiting and real-time features
 [[durable_objects.bindings]]
 name = "RATE_LIMITER"
 class_name = "RateLimiter"
-script_name = "readitlater-api"
+script_name = "saveforlater-api"
 
 [[durable_objects.bindings]]
 name = "READING_SESSION"
 class_name = "ReadingSession"
-script_name = "readitlater-api"
+script_name = "saveforlater-api"
 
 [[migrations]]
 tag = "v1"
-new_classes = ["RateLimiter", "ReadingSession"]
+new_sqlite_classes = ["RateLimiter", "ReadingSession"]
 
 # Environment variables (use .dev.vars for local development)
 [env.production]
-name = "readitlater-api-prod"
+name = "saveforlater-api-prod"
 
 [env.staging]
-name = "readitlater-api-staging"
+name = "saveforlater-api-staging"

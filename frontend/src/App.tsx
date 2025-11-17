@@ -28,7 +28,7 @@ function AppContent() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>ReadItLater</h1>
+        <h1>SaveForLater</h1>
         <div className="user-info">
           <span>{user.displayName}</span>
           <button onClick={signOut}>Sign Out</button>

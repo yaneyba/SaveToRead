@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers deploying ReadItLater to production using Cloudflare's ecosystem. The application consists of two main components:
+This guide covers deploying SaveForLater to production using Cloudflare's ecosystem. The application consists of two main components:
 1. **Frontend**: React app hosted on Cloudflare Pages
 2. **Workers**: API backend running on Cloudflare Workers
 
@@ -36,8 +36,8 @@ git --version
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/ReadItLater.git
-cd ReadItLater
+git clone https://github.com/yourusername/SaveForLater.git
+cd SaveForLater
 npm install
 ```
 
@@ -71,7 +71,7 @@ npm install
 
 1. Go to [Azure Portal](https://portal.azure.com)
 2. Register a new application:
-   - Name: ReadItLater
+   - Name: SaveForLater
    - Supported account types: "Multitenant"
    - Redirect URI: Same as Google above
 3. API permissions:
@@ -237,7 +237,7 @@ cd frontend
 npm run build
 
 # Deploy to Pages
-wrangler pages deploy dist --project-name=readitlater
+wrangler pages deploy dist --project-name=saveforlater
 ```
 
 **Option B: Via Git Integration**
@@ -318,7 +318,7 @@ jobs:
       - name: Deploy to Cloudflare Pages
         run: |
           cd frontend
-          npx wrangler pages deploy dist --project-name=readitlater
+          npx wrangler pages deploy dist --project-name=saveforlater
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 ```

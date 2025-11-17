@@ -1,5 +1,5 @@
 /**
- * Shared types for ReadItLater application
+ * Shared types for SaveForLater application
  * Used by both frontend and workers
  */
 

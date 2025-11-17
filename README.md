@@ -1,6 +1,6 @@
-# ReadItLater - Modern Read-It-Later Application
+# SaveForLater - Modern Save-For-Later Application
 
-A full-stack read-it-later application built with Vite, React, TypeScript, and Cloudflare Workers.
+A full-stack save-for-later application built with Vite, React, TypeScript, and Cloudflare Workers.
 
 ## Architecture
 
@@ -19,7 +19,7 @@ A full-stack read-it-later application built with Vite, React, TypeScript, and C
 ## Project Structure
 
 ```
-ReadItLater/
+SaveForLater/
 ├── frontend/              # Vite + React frontend
 │   ├── src/
 │   │   ├── components/    # React components

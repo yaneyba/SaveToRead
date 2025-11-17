@@ -19,13 +19,13 @@ import type {
   UserSettings,
   UserAnalytics,
   ApiResponse
-} from '@readitlater/shared';
+} from '@saveforlater/shared';
 import {
   SubscriptionTier,
   SubscriptionStatus,
   StorageProvider,
   AnnotationType
-} from '@readitlater/shared';
+} from '@saveforlater/shared';
 import { IDataProvider } from './IDataProvider';
 
 export class MockDataProvider implements IDataProvider {

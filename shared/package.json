@@ -1,7 +1,7 @@
 {
-  "name": "@readitlater/shared",
+  "name": "@saveforlater/shared",
   "version": "1.0.0",
-  "description": "Shared types and utilities for ReadItLater",
+  "description": "Shared types and utilities for SaveForLater",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

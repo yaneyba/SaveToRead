@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 import { useArticles } from '../hooks/useArticles';
-import type { Article } from '@readitlater/shared';
+import type { Article } from '@saveforlater/shared';
 
 export function ArticleList() {
   const { articles, loading, error, createArticle, updateArticle, deleteArticle } = useArticles();

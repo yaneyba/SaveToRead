@@ -1,7 +1,7 @@
 /**
  * Landing Page Component
  *
- * Marketing landing page for ReadItLater SaaS
+ * Marketing landing page for SaveForLater SaaS
  */
 
 import { useState } from 'react';
@@ -20,7 +20,7 @@ export function LandingPage() {
           <div className="nav-content">
             <div className="logo">
               <span className="logo-icon">📚</span>
-              <span className="logo-text">ReadItLater</span>
+              <span className="logo-text">SaveForLater</span>
             </div>
             <div className="nav-actions">
               <button onClick={() => setShowSignIn(true)} className="btn-text">
@@ -331,7 +331,7 @@ export function LandingPage() {
           <div className="cta-content">
             <h2 className="cta-title">Ready to Build Your Reading Library?</h2>
             <p className="cta-description">
-              Join thousands of readers who trust ReadItLater to organize and preserve their favorite content.
+              Join thousands of readers who trust SaveForLater to organize and preserve their favorite content.
             </p>
             <button onClick={() => setShowSignUp(true)} className="btn-cta">
               Start Reading Free
@@ -348,7 +348,7 @@ export function LandingPage() {
             <div className="footer-section">
               <div className="footer-logo">
                 <span className="logo-icon">📚</span>
-                <span className="logo-text">ReadItLater</span>
+                <span className="logo-text">SaveForLater</span>
               </div>
               <p className="footer-description">
                 Your personal reading library, stored in your own cloud.
@@ -398,7 +398,7 @@ export function LandingPage() {
 
           <div className="footer-bottom">
             <p className="footer-copyright">
-              © 2024 ReadItLater. All rights reserved.
+              © 2024 SaveForLater. All rights reserved.
             </p>
             <div className="footer-social">
               <a href="#twitter" aria-label="Twitter">𝕏</a>

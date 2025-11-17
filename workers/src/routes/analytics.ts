@@ -6,7 +6,7 @@
 
 import { Hono } from 'hono';
 import type { Env } from '../types/env';
-import type { UserAnalytics } from '@readitlater/shared';
+import type { UserAnalytics } from '@saveforlater/shared';
 
 const app = new Hono<{ Bindings: Env; Variables: { userId?: string } }>();
 
