@@ -53,6 +53,11 @@
   margin-bottom: 0.5rem;
 }
 
+.footer-logo svg {
+  color: #FF6F26;
+  flex-shrink: 0;
+}
+
 .footer-logo-text {
   font-size: 1.125rem;
   font-weight: 600;
