@@ -4,7 +4,7 @@
  * Functions to upload files to various cloud storage providers
  */
 
-import type { StorageProvider } from '@savetoread/shared';
+import { StorageProvider } from '@savetoread/shared';
 
 export interface UploadResult {
   fileId: string;
@@ -204,11 +204,11 @@ export async function uploadToCloudStorage(
   folderPath?: string
 ): Promise<UploadResult> {
   switch (provider) {
-    case 'GOOGLE_DRIVE':
+    case StorageProvider.GOOGLE_DRIVE:
       return uploadFileToGoogleDrive(accessToken, fileName, mimeType, content, folderPath);
-    case 'DROPBOX':
+    case StorageProvider.DROPBOX:
       return uploadFileToDropbox(accessToken, fileName, content, folderPath);
-    case 'ONEDRIVE':
+    case StorageProvider.ONEDRIVE:
       return uploadFileToOneDrive(accessToken, fileName, content, folderPath);
     default:
       throw new Error(`Unsupported storage provider: ${provider}`);

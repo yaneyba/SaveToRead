@@ -4,12 +4,12 @@
  */
 
 declare module '@cloudflare/puppeteer' {
-  export interface Browser {
+  interface Browser {
     newPage(): Promise<Page>;
     close(): Promise<void>;
   }
 
-  export interface Page {
+  interface Page {
     goto(url: string, options?: {
       waitUntil?: 'load' | 'domcontentloaded' | 'networkidle0' | 'networkidle2';
       timeout?: number;
@@ -38,14 +38,12 @@ declare module '@cloudflare/puppeteer' {
     close(): Promise<void>;
   }
 
-  export interface PuppeteerLaunchOptions {
-    headless?: boolean;
-    args?: string[];
+  interface PuppeteerModule {
+    launch(browserBinding: unknown): Promise<Browser>;
   }
 
-  export function launch(browserBinding: unknown): Promise<Browser>;
+  const puppeteer: PuppeteerModule;
+  export default puppeteer;
 
-  export default {
-    launch: (browserBinding: unknown) => Promise<Browser>
-  };
+  export { Browser, Page };
 }

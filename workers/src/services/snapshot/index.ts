@@ -4,7 +4,7 @@
  * Handles creation of PDF and HTML snapshots with various styling options
  */
 
-import type { Browser } from '../types/cloudflare-puppeteer';
+import type { Browser } from '@cloudflare/puppeteer';
 
 export interface SnapshotOptions {
   format: 'pdf' | 'html' | 'epub' | 'markdown' | 'text';
@@ -133,9 +133,15 @@ export async function generateHtmlSnapshot(
 
     if (options.embedAssets) {
       // Get full HTML with embedded images as base64
+      // Note: page.evaluate() runs in browser context where DOM APIs are available
       html = await page.evaluate(() => {
+        // @ts-ignore - DOM APIs available in browser context
+        const doc: any = document;
+        // @ts-ignore
+        const win: any = window;
+
         // Clone the document
-        const clone = document.cloneNode(true) as Document;
+        const clone = doc.cloneNode(true);
 
         // Remove scripts and unwanted elements
         const unwantedSelectors = [
@@ -145,21 +151,22 @@ export async function generateHtmlSnapshot(
           '.social-share', '.comments', 'footer'
         ];
 
-        unwantedSelectors.forEach(selector => {
-          clone.querySelectorAll(selector).forEach(el => el.remove());
+        unwantedSelectors.forEach((selector: string) => {
+          clone.querySelectorAll(selector).forEach((el: any) => el.remove());
         });
 
         // Convert images to base64
-        const images = clone.querySelectorAll('img') as NodeListOf<HTMLImageElement>;
+        const images = clone.querySelectorAll('img');
         const promises: Promise<void>[] = [];
 
-        images.forEach(img => {
+        images.forEach((img: any) => {
           if (img.src && img.src.startsWith('http')) {
             promises.push(
               fetch(img.src)
                 .then(res => res.blob())
                 .then(blob => {
                   return new Promise<string>((resolve) => {
+                    // @ts-ignore - FileReader available in browser
                     const reader = new FileReader();
                     reader.onloadend = () => resolve(reader.result as string);
                     reader.readAsDataURL(blob);
@@ -183,7 +190,7 @@ export async function generateHtmlSnapshot(
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="SaveToRead">
-  <meta name="saved-from" content="${window.location.href}">
+  <meta name="saved-from" content="${win.location.href}">
   <meta name="saved-date" content="${new Date().toISOString()}">
   <title>${clone.querySelector('title')?.textContent || 'Saved Article'}</title>
   <style>
