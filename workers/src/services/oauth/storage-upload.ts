@@ -4,7 +4,7 @@
  * Functions to upload files to various cloud storage providers
  */
 
-import type { StorageProvider } from '@savetoread/shared';
+import { StorageProvider } from '@savetoread/shared';
 
 export interface UploadResult {
   fileId: string;
