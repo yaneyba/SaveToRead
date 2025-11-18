@@ -12,6 +12,7 @@ export function ArticleList() {
   const { articles, loading, error, createArticle, updateArticle, deleteArticle } = useArticles();
   const [newUrl, setNewUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,12 +48,38 @@ export function ArticleList() {
   };
 
   if (loading) {
-    return <div className="loading">Loading articles...</div>;
+    return (
+      <div className="article-list">
+        <h1>My Articles</h1>
+        <div className="loading-skeleton">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="skeleton-card">
+              <div className="skeleton-title" />
+              <div className="skeleton-text" />
+              <div className="skeleton-text short" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error) {
     return <div className="error">Error: {error}</div>;
   }
+
+  // Filter articles based on search query
+  const filteredArticles = articles.filter((article) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      article.title?.toLowerCase().includes(query) ||
+      article.url.toLowerCase().includes(query) ||
+      article.excerpt?.toLowerCase().includes(query) ||
+      article.author?.toLowerCase().includes(query) ||
+      article.tags.some((tag) => tag.toLowerCase().includes(query))
+    );
+  });
 
   return (
     <div className="article-list">
@@ -72,11 +99,25 @@ export function ArticleList() {
         </button>
       </form>
 
+      {articles.length > 0 && (
+        <div className="search-box">
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search articles..."
+            className="search-input"
+          />
+        </div>
+      )}
+
       <div className="articles">
-        {articles.length === 0 ? (
+        {filteredArticles.length === 0 && articles.length > 0 ? (
+          <p className="empty-state">No articles match your search.</p>
+        ) : filteredArticles.length === 0 ? (
           <p className="empty-state">No articles yet. Add your first article above!</p>
         ) : (
-          articles.map((article) => (
+          filteredArticles.map((article) => (
             <article key={article.id} className="article-card">
               <div className="article-header">
                 <h2>{article.title || article.url}</h2>
