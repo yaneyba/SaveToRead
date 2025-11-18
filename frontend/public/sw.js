@@ -24,7 +24,14 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[SW] Precaching resources');
-        return cache.addAll(PRECACHE_URLS);
+        // Add resources individually to handle failures gracefully
+        return Promise.allSettled(
+          PRECACHE_URLS.map(url => 
+            cache.add(url).catch(err => {
+              console.warn(`[SW] Failed to cache ${url}:`, err);
+            })
+          )
+        );
       })
       .then(() => self.skipWaiting())
   );
@@ -76,9 +83,20 @@ self.addEventListener('fetch', (event) => {
 
           return response;
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error('[SW] API fetch failed:', error);
           // Return cached version if network fails
-          return caches.match(request);
+          return caches.match(request).then((cached) => {
+            if (cached) {
+              return cached;
+            }
+            // Return error response if no cache available
+            return new Response(JSON.stringify({ error: 'Network unavailable' }), {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: { 'Content-Type': 'application/json' }
+            });
+          });
         })
     );
     return;
@@ -106,6 +124,15 @@ self.addEventListener('fetch', (event) => {
             });
 
             return response;
+          })
+          .catch((error) => {
+            console.error('[SW] Fetch failed:', error);
+            // Return a basic error response instead of undefined
+            return new Response('Network error', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: { 'Content-Type': 'text/plain' }
+            });
           });
       })
   );
