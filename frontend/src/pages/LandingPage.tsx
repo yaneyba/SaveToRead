@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 import { SignInModal } from '../components/SignInModal';
-import { LogoIcon } from '../components/Logo';
+import { LogoWordmark } from '../components/Logo';
 import { Footer } from '../components/Footer';
 import '../styles/landing.css';
 
@@ -20,10 +20,7 @@ export function LandingPage() {
       {/* Sticky Navigation */}
       <nav className="hero-nav">
         <div className="nav-content">
-          <div className="logo">
-            <LogoIcon size={32} className="logo-icon" />
-            <span className="logo-text">SaveToRead</span>
-          </div>
+          <LogoWordmark size={32} className="logo" textColor="white" iconColor="white" />
           <div className="nav-actions">
             <button onClick={() => setShowSignIn(true)} className="btn-text">
               Sign In

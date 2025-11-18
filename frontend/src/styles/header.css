@@ -65,18 +65,6 @@
   opacity: 0.8;
 }
 
-.header-logo-text {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-@media (max-width: 640px) {
-  .header-logo-text {
-    display: none;
-  }
-}
-
 /* Center - Navigation */
 .header-nav {
   display: flex;

@@ -58,12 +58,6 @@
   color: white;
 }
 
-.footer-logo-text {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #111827;
-}
-
 .footer-description {
   color: #6b7280;
   font-size: 0.875rem;
@@ -215,10 +209,6 @@
   .footer {
     background: #111827;
     border-top-color: #374151;
-  }
-
-  .footer-logo-text {
-    color: #f9fafb;
   }
 
   .footer-description {

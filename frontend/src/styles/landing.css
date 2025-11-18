@@ -67,11 +67,6 @@
   flex-shrink: 0;
 }
 
-.logo-text {
-  white-space: nowrap;
-  color: white;
-}
-
 @media (max-width: 640px) {
   .logo {
     font-size: 1.25rem;

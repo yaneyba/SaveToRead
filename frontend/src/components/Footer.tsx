@@ -4,7 +4,7 @@
  * Reusable footer component for all pages
  */
 
-import { LogoIcon } from './Logo';
+import { LogoWordmark } from './Logo';
 import { SocialIcon } from './SocialIcon';
 import { FOOTER_LINKS, SOCIAL_LINKS, FOOTER_CONTENT } from '../config/links';
 
@@ -40,10 +40,7 @@ export function Footer({ variant = 'default' }: FooterProps) {
         <div className="footer-content">
           {/* Brand Section */}
           <div className="footer-section footer-brand">
-            <div className="footer-logo">
-              <LogoIcon size={28} />
-              <span className="footer-logo-text">SaveToRead</span>
-            </div>
+            <LogoWordmark size={28} className="footer-logo" textColor="#111827" iconColor="#111827" />
             <p className="footer-description">
               {FOOTER_CONTENT.description}
             </p>
