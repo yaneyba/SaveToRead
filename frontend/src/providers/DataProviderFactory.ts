@@ -42,8 +42,12 @@ export class DataProviderFactory {
   private static createProvider(type: DataProviderType): IDataProvider {
     switch (type) {
       case DataProviderType.API:
+        // Use VITE_API_URL from env, or fallback to production API in production mode
+        const baseUrl = import.meta.env.VITE_API_URL || 
+          (import.meta.env.PROD ? 'https://savetoread-api.yeb404974.workers.dev' : '');
+        
         return new ApiDataProvider({
-          baseUrl: import.meta.env.VITE_API_URL || '',
+          baseUrl,
           timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000', 10)
         });
 
