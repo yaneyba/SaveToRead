@@ -65,7 +65,7 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
           )}
 
           <a href="/" className="header-logo">
-            <LogoIcon size={32} className="text-orange-500" />
+            <LogoIcon size={32} className="text-white" />
             <span className="header-logo-text">SaveToRead</span>
           </a>
         </div>

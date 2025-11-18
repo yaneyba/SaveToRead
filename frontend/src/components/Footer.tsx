@@ -41,7 +41,7 @@ export function Footer({ variant = 'default' }: FooterProps) {
           {/* Brand Section */}
           <div className="footer-section footer-brand">
             <div className="footer-logo">
-              <LogoIcon size={28} className="text-orange-500" />
+              <LogoIcon size={28} />
               <span className="footer-logo-text">SaveToRead</span>
             </div>
             <p className="footer-description">

@@ -54,8 +54,8 @@
 }
 
 .footer-logo svg {
-  color: #FF6F26;
   flex-shrink: 0;
+  color: white;
 }
 
 .footer-logo-text {
