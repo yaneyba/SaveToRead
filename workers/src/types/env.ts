@@ -2,6 +2,8 @@
  * Environment bindings for Cloudflare Workers
  */
 
+import type { Fetcher } from '@cloudflare/workers-types';
+
 export interface Env {
   // KV Namespaces
   ARTICLES: KVNamespace;
@@ -12,6 +14,9 @@ export interface Env {
   // Durable Objects
   RATE_LIMITER: DurableObjectNamespace;
   READING_SESSION: DurableObjectNamespace;
+
+  // Browser Rendering
+  BROWSER: Fetcher;
 
   // Environment Variables
   JWT_SECRET: string;

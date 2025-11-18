@@ -236,6 +236,21 @@ export interface UserSettings {
   autoArchive: boolean;
   defaultTags: string[];
   notifications: NotificationSettings;
+  snapshot: SnapshotSettings;
+}
+
+export interface SnapshotSettings {
+  autoGenerate: boolean;
+  defaultFormat: 'pdf' | 'html' | 'both';
+  uploadToCloud: boolean;
+  embedAssets: boolean;
+  customStyling?: {
+    fontSize?: string;
+    fontFamily?: string;
+    lineHeight?: number;
+    maxWidth?: string;
+    theme?: 'light' | 'dark' | 'sepia';
+  };
 }
 
 export interface NotificationSettings {
