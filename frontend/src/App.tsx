@@ -5,7 +5,7 @@
  */
 
 import { AuthProvider } from '@/components/AuthProvider';
-import { ArticleList } from '@/components/ArticleList';
+import { Dashboard } from '@/pages/Dashboard';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { LandingPage } from '@/pages/LandingPage';
@@ -32,7 +32,7 @@ function AppContent() {
       <Header />
 
       <main className="app-main">
-        <ArticleList />
+        <Dashboard />
       </main>
 
       <Footer variant="minimal" />
