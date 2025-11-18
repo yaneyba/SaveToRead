@@ -53,6 +53,9 @@ export interface Article {
   snapshotPdfUrl?: string;
   snapshotHtmlUrl?: string;
   storageProvider?: StorageProvider;
+  // Content metrics
+  wordCount?: number;
+  readingTimeMinutes?: number; // Estimated reading time in minutes
 }
 
 export interface CreateArticleInput {
@@ -236,6 +239,22 @@ export interface UserSettings {
   autoArchive: boolean;
   defaultTags: string[];
   notifications: NotificationSettings;
+  snapshot: SnapshotSettings;
+}
+
+export interface SnapshotSettings {
+  autoGenerate: boolean;
+  defaultFormat: 'pdf' | 'html' | 'both';
+  uploadToCloud: boolean;
+  embedAssets: boolean;
+  customStyling?: {
+    fontSize?: string;
+    fontFamily?: string;
+    lineHeight?: number;
+    maxWidth?: string;
+    theme?: 'light' | 'dark' | 'sepia';
+  };
+  organizationStrategy?: 'date' | 'domain' | 'tags' | 'none';
 }
 
 export interface NotificationSettings {

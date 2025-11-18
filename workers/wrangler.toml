@@ -2,6 +2,7 @@
 name = "savetoread-api"
 main = "src/index.ts"
 compatibility_date = "2023-12-18"
+compatibility_flags = ["nodejs_compat"]
 
 # KV Namespaces
 [[kv_namespaces]]
@@ -34,6 +35,10 @@ script_name = "savetoread-api"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["RateLimiter", "ReadingSession"]
+
+# Browser Rendering for PDF/HTML snapshots
+[browser]
+binding = "BROWSER"
 
 # Environment variables (use .dev.vars for local development)
 [env.production]

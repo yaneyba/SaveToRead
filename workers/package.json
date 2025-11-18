@@ -11,6 +11,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@cloudflare/puppeteer": "^1.0.4",
     "@savetoread/shared": "*",
     "hono": "^4.10.6",
     "jose": "^5.2.0",

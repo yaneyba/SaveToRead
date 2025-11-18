@@ -267,6 +267,12 @@ export class MockDataProvider implements IDataProvider {
         email: true,
         push: false,
         digest: 'weekly'
+      },
+      snapshot: {
+        autoGenerate: false,
+        defaultFormat: 'pdf',
+        uploadToCloud: true,
+        embedAssets: true
       }
     };
     return this.mockResponse(settings);
