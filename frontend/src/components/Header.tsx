@@ -135,7 +135,10 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
                   <div className="user-menu-divider" />
 
                   <nav className="user-menu-nav">
-                    <a href="/settings" className="user-menu-item">
+                    <button
+                      onClick={(e) => { e.preventDefault(); alert('Settings page coming soon!'); }}
+                      className="user-menu-item"
+                    >
                       <svg
                         width="16"
                         height="16"
@@ -148,8 +151,11 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
                         <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24" />
                       </svg>
                       Settings
-                    </a>
-                    <a href="/storage" className="user-menu-item">
+                    </button>
+                    <button
+                      onClick={(e) => { e.preventDefault(); alert('Cloud Storage page coming soon!'); }}
+                      className="user-menu-item"
+                    >
                       <svg
                         width="16"
                         height="16"
@@ -161,8 +167,11 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
                         <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                       </svg>
                       Cloud Storage
-                    </a>
-                    <a href="/billing" className="user-menu-item">
+                    </button>
+                    <button
+                      onClick={(e) => { e.preventDefault(); alert('Billing page coming soon!'); }}
+                      className="user-menu-item"
+                    >
                       <svg
                         width="16"
                         height="16"
@@ -175,7 +184,7 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
                         <line x1="1" y1="10" x2="23" y2="10" />
                       </svg>
                       Billing
-                    </a>
+                    </button>
                   </nav>
 
                   <div className="user-menu-divider" />
