@@ -21,6 +21,11 @@ import {
   uploadFileToDropbox,
   uploadFileToOneDrive
 } from '../services/oauth/storage-upload';
+import {
+  normalizeUrl,
+  areDuplicateUrls,
+  analyzeContent
+} from '../services/content-analysis';
 
 const app = new Hono<{ Bindings: Env; Variables: { userId?: string } }>();
 
@@ -139,6 +144,61 @@ app.get('/:id', async (c) => {
 });
 
 /**
+ * Check if URL is a duplicate
+ */
+app.post('/check-duplicate', async (c) => {
+  const userId = c.get('userId');
+  if (!userId) {
+    return c.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'User not authenticated' } }, 401);
+  }
+
+  try {
+    const { url } = await c.req.json<{ url: string }>();
+
+    if (!url) {
+      return c.json({
+        success: false,
+        error: { code: 'INVALID_INPUT', message: 'URL is required' }
+      }, 400);
+    }
+
+    // Check for duplicates
+    const articleIdsKey = `user:${userId}:articles`;
+    const articleIdsData = await c.env.ARTICLES.get(articleIdsKey);
+    const articleIds: string[] = articleIdsData ? JSON.parse(articleIdsData) : [];
+
+    for (const existingId of articleIds) {
+      const existingData = await c.env.ARTICLES.get(`article:${existingId}`);
+      if (existingData) {
+        const existing: Article = JSON.parse(existingData);
+        if (areDuplicateUrls(url, existing.url)) {
+          return c.json({
+            success: true,
+            data: {
+              isDuplicate: true,
+              existingArticle: existing
+            }
+          });
+        }
+      }
+    }
+
+    return c.json({
+      success: true,
+      data: {
+        isDuplicate: false
+      }
+    });
+  } catch (error) {
+    console.error('Check duplicate error:', error);
+    return c.json({
+      success: false,
+      error: { code: 'CHECK_ERROR', message: 'Failed to check for duplicates' }
+    }, 500);
+  }
+});
+
+/**
  * Create new article
  */
 app.post('/', async (c) => {
@@ -157,20 +217,56 @@ app.post('/', async (c) => {
       }, 400);
     }
 
+    // Check for duplicates
+    const articleIdsKey = `user:${userId}:articles`;
+    const articleIdsData = await c.env.ARTICLES.get(articleIdsKey);
+    const articleIds: string[] = articleIdsData ? JSON.parse(articleIdsData) : [];
+
+    let duplicateArticle: Article | null = null;
+    for (const existingId of articleIds) {
+      const existingData = await c.env.ARTICLES.get(`article:${existingId}`);
+      if (existingData) {
+        const existing: Article = JSON.parse(existingData);
+        if (areDuplicateUrls(input.url, existing.url)) {
+          duplicateArticle = existing;
+          break;
+        }
+      }
+    }
+
+    // If duplicate found, return it with a warning
+    if (duplicateArticle) {
+      return c.json({
+        success: false,
+        error: {
+          code: 'DUPLICATE_ARTICLE',
+          message: 'This article has already been saved',
+          details: { existingArticle: duplicateArticle }
+        }
+      }, 409); // 409 Conflict
+    }
+
     // In a real implementation, you would fetch and parse the article content here
     // For now, we'll create a basic article
     const articleId = crypto.randomUUID();
+
+    // Placeholder content for demo - in production, fetch from URL
+    const placeholderContent = '';
+    const contentMetrics = analyzeContent(placeholderContent);
+
     const article: Article = {
       id: articleId,
       userId,
       url: input.url,
-      title: new URL(input.url).hostname, // Placeholder
+      title: new URL(input.url).hostname, // Placeholder - would be fetched
       tags: input.tags || [],
       isFavorite: false,
       isArchived: false,
       readProgress: 0,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      wordCount: contentMetrics.wordCount,
+      readingTimeMinutes: contentMetrics.readingTimeMinutes
     };
 
     // Store article
