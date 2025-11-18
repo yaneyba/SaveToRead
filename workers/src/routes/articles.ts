@@ -272,10 +272,7 @@ app.post('/', async (c) => {
     // Store article
     await c.env.ARTICLES.put(`article:${articleId}`, JSON.stringify(article));
 
-    // Update user's article list
-    const articleIdsKey = `user:${userId}:articles`;
-    const articleIdsData = await c.env.ARTICLES.get(articleIdsKey);
-    const articleIds: string[] = articleIdsData ? JSON.parse(articleIdsData) : [];
+    // Update user's article list (reuse articleIds from duplicate check above)
     articleIds.push(articleId);
     await c.env.ARTICLES.put(articleIdsKey, JSON.stringify(articleIds));
 
