@@ -1,0 +1,27 @@
+# SaveToRead Robots.txt
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow private/authenticated areas
+Disallow: /dashboard
+Disallow: /library
+Disallow: /favorites
+Disallow: /archive
+Disallow: /settings
+Disallow: /api/
+
+# Allow crawling of public pages
+Allow: /$
+Allow: /pricing
+Allow: /features
+Allow: /about
+Allow: /blog
+Allow: /help
+
+# Crawl delay (be nice to servers)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://savetoread.com/sitemap.xml

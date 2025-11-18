@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { SignInModal } from '@/components/SignInModal';
 import { LogoWordmark } from '@/components/Logo';
 import { Footer } from '@/components/Footer';
+import { SEO } from '@/components/SEO';
 import '@/styles/landing.css';
 
 export function LandingPage() {
@@ -16,7 +17,14 @@ export function LandingPage() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
-    <div className="landing-page">
+    <>
+      <SEO
+        title="SaveToRead - Your Personal Reading Library in Your Cloud"
+        description="Save articles, create snapshots, and store everything in your own cloud storage. Google Drive, Dropbox, or OneDrive - you choose where your data lives. 100% privacy, unlimited articles."
+        keywords="read later, save articles, cloud storage, google drive, dropbox, onedrive, article reader, reading list, bookmark manager, web clipper, article saver, pocket alternative, instapaper alternative"
+        url="https://savetoread.com/"
+      />
+      <div className="landing-page">
       {/* Sticky Navigation */}
       <nav className="hero-nav">
         <div className="nav-content">
@@ -379,5 +387,6 @@ export function LandingPage() {
       {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
       {showSignUp && <SignInModal mode="signup" onClose={() => setShowSignUp(false)} />}
     </div>
+    </>
   );
 }
