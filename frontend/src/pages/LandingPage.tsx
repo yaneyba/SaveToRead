@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { SignInModal } from '../components/SignInModal';
+import { LogoIcon } from '../components/Logo';
 import '../styles/landing.css';
 
 export function LandingPage() {
@@ -19,7 +20,7 @@ export function LandingPage() {
         <nav className="hero-nav">
           <div className="nav-content">
             <div className="logo">
-              <span className="logo-icon">📚</span>
+              <LogoIcon size={32} className="text-orange-500" />
               <span className="logo-text">SaveToRead</span>
             </div>
             <div className="nav-actions">
@@ -347,7 +348,7 @@ export function LandingPage() {
           <div className="footer-content">
             <div className="footer-section">
               <div className="footer-logo">
-                <span className="logo-icon">📚</span>
+                <LogoIcon size={28} className="text-orange-500" />
                 <span className="logo-text">SaveToRead</span>
               </div>
               <p className="footer-description">
