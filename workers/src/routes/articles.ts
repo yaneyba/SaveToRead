@@ -7,6 +7,20 @@
 import { Hono } from 'hono';
 import type { Env } from '../types/env';
 import type { Article, CreateArticleInput, UpdateArticleInput } from '@savetoread/shared';
+import puppeteer from '@cloudflare/puppeteer';
+import {
+  generatePdfSnapshot,
+  generateHtmlSnapshot,
+  generateEpubSnapshot,
+  generateMarkdownSnapshot,
+  generateTextSnapshot,
+  type SnapshotOptions
+} from '../services/snapshot';
+import {
+  uploadFileToGoogleDrive,
+  uploadFileToDropbox,
+  uploadFileToOneDrive
+} from '../services/oauth/storage-upload';
 
 const app = new Hono<{ Bindings: Env; Variables: { userId?: string } }>();
 
@@ -169,6 +183,27 @@ app.post('/', async (c) => {
     articleIds.push(articleId);
     await c.env.ARTICLES.put(articleIdsKey, JSON.stringify(articleIds));
 
+    // Check if automatic snapshot generation is enabled
+    const settingsKey = `user:${userId}:settings`;
+    const settingsData = await c.env.USERS.get(settingsKey);
+
+    if (settingsData) {
+      const settings = JSON.parse(settingsData);
+
+      if (settings.snapshot?.autoGenerate) {
+        // Trigger snapshot generation asynchronously
+        // Don't wait for it to complete, return the article immediately
+        c.executionCtx.waitUntil(
+          generateAutomaticSnapshot(
+            c.env,
+            article,
+            userId,
+            settings.snapshot
+          )
+        );
+      }
+    }
+
     return c.json({ success: true, data: article }, 201);
   } catch (error) {
     console.error('Create article error:', error);
@@ -286,7 +321,7 @@ app.delete('/:id', async (c) => {
 });
 
 /**
- * Generate snapshot (PDF or HTML)
+ * Generate snapshot (PDF, HTML, EPUB, Markdown, or Text)
  */
 app.post('/:id/snapshot', async (c) => {
   const userId = c.get('userId');
@@ -296,20 +331,576 @@ app.post('/:id/snapshot', async (c) => {
 
   try {
     const articleId = c.req.param('id');
-    const { format } = await c.req.json<{ format: 'pdf' | 'html' }>();
+    const { format, styling, uploadToCloud = true } = await c.req.json<{
+      format: 'pdf' | 'html' | 'epub' | 'markdown' | 'text';
+      styling?: SnapshotOptions['styling'];
+      uploadToCloud?: boolean;
+    }>();
 
-    // In a real implementation, you would generate the snapshot and upload to user's cloud storage
-    // For now, return a placeholder URL
-    const url = `https://storage.example.com/snapshots/${articleId}.${format}`;
+    // Get the article
+    const articleData = await c.env.ARTICLES.get(`article:${articleId}`);
+    if (!articleData) {
+      return c.json({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Article not found' }
+      }, 404);
+    }
 
-    return c.json({ success: true, data: { url } });
+    const article: Article = JSON.parse(articleData);
+
+    // Verify ownership
+    if (article.userId !== userId) {
+      return c.json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'Access denied' }
+      }, 403);
+    }
+
+    // Launch browser for PDF/HTML generation
+    let snapshotResult;
+    let browser;
+
+    try {
+      if (format === 'pdf' || format === 'html') {
+        browser = await puppeteer.launch(c.env.BROWSER);
+      }
+
+      // Generate snapshot based on format
+      switch (format) {
+        case 'pdf':
+          if (!browser) throw new Error('Browser not initialized');
+          snapshotResult = await generatePdfSnapshot(
+            article.url,
+            article.title || 'Untitled',
+            browser,
+            styling
+          );
+          break;
+
+        case 'html':
+          if (!browser) throw new Error('Browser not initialized');
+          snapshotResult = await generateHtmlSnapshot(
+            article.url,
+            article.title || 'Untitled',
+            browser,
+            { embedAssets: true, includeStyles: true }
+          );
+          break;
+
+        case 'epub':
+          snapshotResult = await generateEpubSnapshot(
+            article.url,
+            article.title || 'Untitled',
+            article.author,
+            article.content || ''
+          );
+          break;
+
+        case 'markdown':
+          snapshotResult = await generateMarkdownSnapshot(
+            article.url,
+            article.title || 'Untitled',
+            article.author,
+            article.content || '',
+            article.tags
+          );
+          break;
+
+        case 'text':
+          snapshotResult = await generateTextSnapshot(
+            article.url,
+            article.title || 'Untitled',
+            article.content || ''
+          );
+          break;
+
+        default:
+          return c.json({
+            success: false,
+            error: { code: 'INVALID_FORMAT', message: 'Unsupported snapshot format' }
+          }, 400);
+      }
+
+      // Upload to cloud storage if requested
+      let cloudUrl: string | undefined;
+      if (uploadToCloud) {
+        // Get user's active storage connection
+        const connectionsKey = `user:${userId}:storage:connections`;
+        const connectionsData = await c.env.USERS.get(connectionsKey);
+
+        if (connectionsData) {
+          const connections = JSON.parse(connectionsData);
+          const activeConnection = connections.find((conn: any) => conn.isActive);
+
+          if (activeConnection) {
+            // Get OAuth tokens
+            const tokensKey = `connection:${activeConnection.id}:tokens`;
+            const encryptedTokens = await c.env.OAUTH_TOKENS.get(tokensKey);
+
+            if (encryptedTokens) {
+              // Decrypt tokens (implementation in oauth service)
+              const tokens = JSON.parse(encryptedTokens); // Simplified - should decrypt
+
+              // Import upload function
+              const { uploadToCloudStorage } = await import('../services/oauth/storage-upload');
+
+              // Upload to cloud
+              const uploadResult = await uploadToCloudStorage(
+                activeConnection.provider,
+                tokens.access_token,
+                snapshotResult.filename,
+                snapshotResult.mimeType,
+                snapshotResult.content,
+                '/SaveToRead/snapshots'
+              );
+
+              cloudUrl = uploadResult.webViewLink || uploadResult.downloadUrl;
+
+              // Update article with snapshot URL
+              const updatedArticle: Article = {
+                ...article,
+                ...(format === 'pdf' && { snapshotPdfUrl: cloudUrl }),
+                ...(format === 'html' && { snapshotHtmlUrl: cloudUrl }),
+                storageProvider: activeConnection.provider,
+                updatedAt: new Date().toISOString()
+              };
+
+              await c.env.ARTICLES.put(`article:${articleId}`, JSON.stringify(updatedArticle));
+            }
+          }
+        }
+      }
+
+      return c.json({
+        success: true,
+        data: {
+          format,
+          filename: snapshotResult.filename,
+          size: snapshotResult.size,
+          mimeType: snapshotResult.mimeType,
+          cloudUrl,
+          uploadedToCloud: !!cloudUrl
+        }
+      });
+    } finally {
+      if (browser) {
+        await browser.close();
+      }
+    }
   } catch (error) {
     console.error('Generate snapshot error:', error);
     return c.json({
       success: false,
-      error: { code: 'SNAPSHOT_ERROR', message: 'Failed to generate snapshot' }
+      error: {
+        code: 'SNAPSHOT_ERROR',
+        message: error instanceof Error ? error.message : 'Failed to generate snapshot'
+      }
     }, 500);
   }
 });
+
+/**
+ * Batch snapshot generation
+ */
+app.post('/batch/snapshot', async (c) => {
+  const userId = c.get('userId');
+  if (!userId) {
+    return c.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'User not authenticated' } }, 401);
+  }
+
+  try {
+    const { articleIds, format, styling } = await c.req.json<{
+      articleIds: string[];
+      format: 'pdf' | 'html' | 'epub' | 'markdown' | 'text';
+      styling?: SnapshotOptions['styling'];
+    }>();
+
+    if (!articleIds || articleIds.length === 0) {
+      return c.json({
+        success: false,
+        error: { code: 'INVALID_INPUT', message: 'Article IDs are required' }
+      }, 400);
+    }
+
+    // Limit batch size to prevent abuse
+    const maxBatchSize = 50;
+    if (articleIds.length > maxBatchSize) {
+      return c.json({
+        success: false,
+        error: { code: 'BATCH_TOO_LARGE', message: `Maximum batch size is ${maxBatchSize} articles` }
+      }, 400);
+    }
+
+    // Trigger batch snapshot generation asynchronously
+    c.executionCtx.waitUntil(
+      processBatchSnapshots(c.env, userId, articleIds, format, styling)
+    );
+
+    return c.json({
+      success: true,
+      data: {
+        message: `Batch snapshot generation started for ${articleIds.length} articles`,
+        articleIds,
+        format
+      }
+    });
+  } catch (error) {
+    console.error('Batch snapshot error:', error);
+    return c.json({
+      success: false,
+      error: { code: 'BATCH_ERROR', message: 'Failed to initiate batch snapshot generation' }
+    }, 500);
+  }
+});
+
+/**
+ * Bulk operations (delete, re-tag, archive)
+ */
+app.post('/batch/operations', async (c) => {
+  const userId = c.get('userId');
+  if (!userId) {
+    return c.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'User not authenticated' } }, 401);
+  }
+
+  try {
+    const { articleIds, operation, params } = await c.req.json<{
+      articleIds: string[];
+      operation: 'delete' | 'retag' | 'archive' | 'unarchive' | 'favorite' | 'unfavorite' | 're-snapshot';
+      params?: any;
+    }>();
+
+    if (!articleIds || articleIds.length === 0) {
+      return c.json({
+        success: false,
+        error: { code: 'INVALID_INPUT', message: 'Article IDs are required' }
+      }, 400);
+    }
+
+    const results = {
+      success: 0,
+      failed: 0,
+      errors: [] as string[]
+    };
+
+    for (const articleId of articleIds) {
+      try {
+        const articleData = await c.env.ARTICLES.get(`article:${articleId}`);
+        if (!articleData) {
+          results.failed++;
+          results.errors.push(`Article ${articleId} not found`);
+          continue;
+        }
+
+        const article: Article = JSON.parse(articleData);
+
+        // Verify ownership
+        if (article.userId !== userId) {
+          results.failed++;
+          results.errors.push(`Access denied to article ${articleId}`);
+          continue;
+        }
+
+        switch (operation) {
+          case 'delete':
+            await c.env.ARTICLES.delete(`article:${articleId}`);
+            // Remove from user's article list
+            const articleIdsKey = `user:${userId}:articles`;
+            const articleIdsData = await c.env.ARTICLES.get(articleIdsKey);
+            if (articleIdsData) {
+              const ids: string[] = JSON.parse(articleIdsData);
+              const updated = ids.filter(id => id !== articleId);
+              await c.env.ARTICLES.put(articleIdsKey, JSON.stringify(updated));
+            }
+            break;
+
+          case 'retag':
+            if (params?.tags) {
+              article.tags = params.additive ? [...new Set([...article.tags, ...params.tags])] : params.tags;
+              article.updatedAt = new Date().toISOString();
+              await c.env.ARTICLES.put(`article:${articleId}`, JSON.stringify(article));
+            }
+            break;
+
+          case 'archive':
+            article.isArchived = true;
+            article.updatedAt = new Date().toISOString();
+            await c.env.ARTICLES.put(`article:${articleId}`, JSON.stringify(article));
+            break;
+
+          case 'unarchive':
+            article.isArchived = false;
+            article.updatedAt = new Date().toISOString();
+            await c.env.ARTICLES.put(`article:${articleId}`, JSON.stringify(article));
+            break;
+
+          case 'favorite':
+            article.isFavorite = true;
+            article.updatedAt = new Date().toISOString();
+            await c.env.ARTICLES.put(`article:${articleId}`, JSON.stringify(article));
+            break;
+
+          case 'unfavorite':
+            article.isFavorite = false;
+            article.updatedAt = new Date().toISOString();
+            await c.env.ARTICLES.put(`article:${articleId}`, JSON.stringify(article));
+            break;
+
+          case 're-snapshot':
+            c.executionCtx.waitUntil(
+              processBatchSnapshots(
+                c.env,
+                userId,
+                [articleId],
+                params?.format || 'pdf',
+                params?.styling
+              )
+            );
+            break;
+        }
+
+        results.success++;
+      } catch (error) {
+        results.failed++;
+        results.errors.push(`Error processing article ${articleId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    }
+
+    return c.json({
+      success: true,
+      data: {
+        operation,
+        totalArticles: articleIds.length,
+        successful: results.success,
+        failed: results.failed,
+        errors: results.errors
+      }
+    });
+  } catch (error) {
+    console.error('Bulk operations error:', error);
+    return c.json({
+      success: false,
+      error: { code: 'BULK_ERROR', message: 'Failed to perform bulk operation' }
+    }, 500);
+  }
+});
+
+/**
+ * Helper function for batch snapshot processing
+ */
+async function processBatchSnapshots(
+  env: Env,
+  userId: string,
+  articleIds: string[],
+  format: 'pdf' | 'html' | 'epub' | 'markdown' | 'text',
+  styling?: SnapshotOptions['styling']
+): Promise<void> {
+  const browser = format === 'pdf' || format === 'html' ? await puppeteer.launch(env.BROWSER) : null;
+
+  try {
+    for (const articleId of articleIds) {
+      try {
+        const articleData = await env.ARTICLES.get(`article:${articleId}`);
+        if (!articleData) continue;
+
+        const article: Article = JSON.parse(articleData);
+        if (article.userId !== userId) continue;
+
+        let snapshotResult;
+
+        switch (format) {
+          case 'pdf':
+            if (!browser) continue;
+            snapshotResult = await generatePdfSnapshot(
+              article.url,
+              article.title || 'Untitled',
+              browser,
+              styling
+            );
+            break;
+
+          case 'html':
+            if (!browser) continue;
+            snapshotResult = await generateHtmlSnapshot(
+              article.url,
+              article.title || 'Untitled',
+              browser,
+              { embedAssets: true, includeStyles: true }
+            );
+            break;
+
+          case 'epub':
+            snapshotResult = await generateEpubSnapshot(
+              article.url,
+              article.title || 'Untitled',
+              article.author,
+              article.content || ''
+            );
+            break;
+
+          case 'markdown':
+            snapshotResult = await generateMarkdownSnapshot(
+              article.url,
+              article.title || 'Untitled',
+              article.author,
+              article.content || '',
+              article.tags
+            );
+            break;
+
+          case 'text':
+            snapshotResult = await generateTextSnapshot(
+              article.url,
+              article.title || 'Untitled',
+              article.content || ''
+            );
+            break;
+        }
+
+        if (snapshotResult) {
+          // Upload to cloud
+          const connectionsKey = `user:${userId}:storage:connections`;
+          const connectionsData = await env.USERS.get(connectionsKey);
+
+          if (connectionsData) {
+            const connections = JSON.parse(connectionsData);
+            const activeConnection = connections.find((conn: any) => conn.isActive);
+
+            if (activeConnection) {
+              const tokensKey = `connection:${activeConnection.id}:tokens`;
+              const encryptedTokens = await env.OAUTH_TOKENS.get(tokensKey);
+
+              if (encryptedTokens) {
+                const tokens = JSON.parse(encryptedTokens);
+                const { uploadToCloudStorage } = await import('../services/oauth/storage-upload');
+
+                const uploadResult = await uploadToCloudStorage(
+                  activeConnection.provider,
+                  tokens.access_token,
+                  snapshotResult.filename,
+                  snapshotResult.mimeType,
+                  snapshotResult.content,
+                  '/SaveToRead/snapshots'
+                );
+
+                // Update article
+                const updatedArticle: Article = {
+                  ...article,
+                  ...(format === 'pdf' && { snapshotPdfUrl: uploadResult.webViewLink }),
+                  ...(format === 'html' && { snapshotHtmlUrl: uploadResult.webViewLink }),
+                  storageProvider: activeConnection.provider,
+                  updatedAt: new Date().toISOString()
+                };
+
+                await env.ARTICLES.put(`article:${articleId}`, JSON.stringify(updatedArticle));
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error(`Error processing snapshot for article ${articleId}:`, error);
+        // Continue with next article
+      }
+    }
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
+}
+
+/**
+ * Helper function to generate snapshots automatically
+ */
+async function generateAutomaticSnapshot(
+  env: Env,
+  article: Article,
+  userId: string,
+  snapshotSettings: any
+): Promise<void> {
+  try {
+    const formats: ('pdf' | 'html')[] =
+      snapshotSettings.defaultFormat === 'both'
+        ? ['pdf', 'html']
+        : [snapshotSettings.defaultFormat];
+
+    // Launch browser once for both formats if needed
+    const browser = await puppeteer.launch(env.BROWSER);
+
+    try {
+      for (const format of formats) {
+        let snapshotResult;
+
+        if (format === 'pdf') {
+          snapshotResult = await generatePdfSnapshot(
+            article.url,
+            article.title || 'Untitled',
+            browser,
+            snapshotSettings.customStyling
+          );
+        } else {
+          snapshotResult = await generateHtmlSnapshot(
+            article.url,
+            article.title || 'Untitled',
+            browser,
+            {
+              embedAssets: snapshotSettings.embedAssets,
+              includeStyles: true
+            }
+          );
+        }
+
+        // Upload to cloud if enabled
+        if (snapshotSettings.uploadToCloud) {
+          const connectionsKey = `user:${userId}:storage:connections`;
+          const connectionsData = await env.USERS.get(connectionsKey);
+
+          if (connectionsData) {
+            const connections = JSON.parse(connectionsData);
+            const activeConnection = connections.find((conn: any) => conn.isActive);
+
+            if (activeConnection) {
+              const tokensKey = `connection:${activeConnection.id}:tokens`;
+              const encryptedTokens = await env.OAUTH_TOKENS.get(tokensKey);
+
+              if (encryptedTokens) {
+                const tokens = JSON.parse(encryptedTokens);
+                const { uploadToCloudStorage } = await import('../services/oauth/storage-upload');
+
+                const uploadResult = await uploadToCloudStorage(
+                  activeConnection.provider,
+                  tokens.access_token,
+                  snapshotResult.filename,
+                  snapshotResult.mimeType,
+                  snapshotResult.content,
+                  '/SaveToRead/snapshots'
+                );
+
+                // Update article with snapshot URL
+                const articleData = await env.ARTICLES.get(`article:${article.id}`);
+                if (articleData) {
+                  const currentArticle: Article = JSON.parse(articleData);
+                  const updatedArticle: Article = {
+                    ...currentArticle,
+                    ...(format === 'pdf' && { snapshotPdfUrl: uploadResult.webViewLink }),
+                    ...(format === 'html' && { snapshotHtmlUrl: uploadResult.webViewLink }),
+                    storageProvider: activeConnection.provider,
+                    updatedAt: new Date().toISOString()
+                  };
+
+                  await env.ARTICLES.put(`article:${article.id}`, JSON.stringify(updatedArticle));
+                }
+              }
+            }
+          }
+        }
+      }
+    } finally {
+      await browser.close();
+    }
+  } catch (error) {
+    console.error('Automatic snapshot generation error:', error);
+    // Silently fail - don't block article creation
+  }
+}
 
 export { app as articleRoutes };

@@ -16,6 +16,7 @@ import { storageRoutes } from './routes/storage';
 import { subscriptionRoutes } from './routes/subscription';
 import { settingsRoutes } from './routes/settings';
 import { analyticsRoutes } from './routes/analytics';
+import { exportRoutes } from './routes/export';
 
 // Middleware
 import { authMiddleware } from './middleware/auth';
@@ -48,12 +49,14 @@ app.use('/api/storage/*', authMiddleware);
 app.use('/api/subscription/*', authMiddleware);
 app.use('/api/settings/*', authMiddleware);
 app.use('/api/analytics/*', authMiddleware);
+app.use('/api/export/*', authMiddleware);
 
 app.route('/api/articles', articleRoutes);
 app.route('/api/storage', storageRoutes);
 app.route('/api/subscription', subscriptionRoutes);
 app.route('/api/settings', settingsRoutes);
 app.route('/api/analytics', analyticsRoutes);
+app.route('/api/export', exportRoutes);
 
 // Error handling
 app.onError(errorHandler);

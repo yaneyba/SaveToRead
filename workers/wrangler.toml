@@ -35,6 +35,10 @@ script_name = "savetoread-api"
 tag = "v1"
 new_sqlite_classes = ["RateLimiter", "ReadingSession"]
 
+# Browser Rendering for PDF/HTML snapshots
+[[browser]]
+binding = "BROWSER"
+
 # Environment variables (use .dev.vars for local development)
 [env.production]
 name = "savetoread-api-prod"
