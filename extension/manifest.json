@@ -10,8 +10,8 @@
     "notifications"
   ],
   "host_permissions": [
-    "https://savetoread.pages.dev/*",
-    "https://savetoread-api.yeb404974.workers.dev/*"
+    "https://savetoread.com/*",
+    "https://savetoread.app/*"
   ],
   "background": {
     "service_worker": "background.js"

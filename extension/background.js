@@ -3,8 +3,8 @@
  * Handles context menu creation and article saving
  */
 
-const API_URL = 'https://savetoread-api.yeb404974.workers.dev';
-const APP_URL = 'https://savetoread.pages.dev';
+const API_URL = 'https://savetoread.app';
+const APP_URL = 'https://savetoread.com';
 
 // Queue for offline saves
 let saveQueue = [];
@@ -93,11 +93,15 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
  * Save article to SaveToRead
  */
 async function saveArticle(url, title, autoSnapshot = false, highlight = null) {
+  console.log('[SaveToRead] Saving article:', { url, title, autoSnapshot, hasHighlight: !!highlight });
+  
   try {
     // Get auth token from storage
     const { authToken } = await chrome.storage.sync.get('authToken');
+    console.log('[SaveToRead] Auth token present:', !!authToken);
 
     if (!authToken) {
+      console.warn('[SaveToRead] No auth token found. Opening login page...');
       // User not logged in - open popup or login page
       chrome.notifications.create({
         type: 'basic',
@@ -134,6 +138,9 @@ async function saveArticle(url, title, autoSnapshot = false, highlight = null) {
     }
 
     // Call API to save article
+    console.log('[SaveToRead] Calling API:', `${API_URL}/api/articles`);
+    console.log('[SaveToRead] Request body:', requestBody);
+    
     const response = await fetch(`${API_URL}/api/articles`, {
       method: 'POST',
       headers: {
@@ -142,6 +149,8 @@ async function saveArticle(url, title, autoSnapshot = false, highlight = null) {
       },
       body: JSON.stringify(requestBody)
     });
+
+    console.log('[SaveToRead] Response status:', response.status);
 
     if (!response.ok) {
       // If offline or network error, add to queue

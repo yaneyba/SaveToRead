@@ -2,7 +2,7 @@
  * SaveToRead Browser Extension - Popup Script
  */
 
-const APP_URL = 'https://savetoread.pages.dev';
+const APP_URL = 'https://savetoread.com';
 
 // DOM Elements
 const loadingEl = document.getElementById('loading');
