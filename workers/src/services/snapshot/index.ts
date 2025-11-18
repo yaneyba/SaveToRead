@@ -4,7 +4,7 @@
  * Handles creation of PDF and HTML snapshots with various styling options
  */
 
-import type { Browser } from '@cloudflare/puppeteer';
+import type { Browser } from '../types/cloudflare-puppeteer';
 
 export interface SnapshotOptions {
   format: 'pdf' | 'html' | 'epub' | 'markdown' | 'text';

@@ -268,6 +268,10 @@ All items pending implementation.
 - Puppeteer API compatible
 - Excellent for PDF generation
 - May need optimization for large batches
+- **Important:** `@cloudflare/puppeteer` is runtime-only (not an npm package)
+  - Available only in Workers runtime environment
+  - Type definitions provided in `workers/src/types/cloudflare-puppeteer.d.ts`
+  - Import works at runtime: `import puppeteer from '@cloudflare/puppeteer'`
 
 ### Service Worker Caching
 - Implements cache-first for static assets
