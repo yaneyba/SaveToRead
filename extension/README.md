@@ -1,13 +1,28 @@
 # SaveToRead Browser Extension
 
-A browser extension that allows you to save articles, links, and pages to read later with a simple right-click.
+A powerful browser extension that allows you to save articles, links, and pages to read later with automatic snapshots, offline support, and keyboard shortcuts.
 
 ## Features
 
+### 🎯 Core Features
 - **Right-Click Context Menu**: Save any link or page with a right-click
 - **Quick Save**: Click the extension icon to save the current page
-- **Notifications**: Get instant feedback when articles are saved
+- **⌨️ Keyboard Shortcuts**: 
+  - `Ctrl+Shift+S` (Mac: `Cmd+Shift+S`) - Save current page
+  - `Ctrl+Shift+A` (Mac: `Cmd+Shift+A`) - Open articles
+- **📸 Auto-Snapshot**: Automatically generate PDF/HTML snapshots when saving
+- **✍️ Text Highlighting**: Save selected text as highlights with your articles
+- **📴 Offline Mode**: Queue articles when offline, auto-sync when back online
+- **🔔 Smart Notifications**: Get instant feedback when articles are saved
 - **Seamless Integration**: Works with your SaveToRead account
+
+### ✨ New in v1.1.0
+- ⌨️ Keyboard shortcuts for power users
+- 📸 Optional auto-snapshot generation
+- 📴 Offline save queue with automatic retry
+- ✍️ Save text selections as highlights
+- 🎯 Queue status indicator in popup
+- 🔄 Background sync for queued articles
 
 ## Installation
 
@@ -40,6 +55,19 @@ The extension will be available on:
 
 ## Usage
 
+### Keyboard Shortcuts (New!)
+
+Save articles even faster with keyboard shortcuts:
+
+1. **Save Current Page**: `Ctrl+Shift+S` (Mac: `Cmd+Shift+S`)
+   - Works on any webpage
+   - Respects your auto-snapshot preference
+   - Shows notification when saved
+
+2. **Open Articles**: `Ctrl+Shift+A` (Mac: `Cmd+Shift+A`)
+   - Quickly jump to your saved articles
+   - Opens in a new tab
+
 ### Right-Click Context Menu
 
 1. **Save a Link**:
@@ -50,16 +78,28 @@ The extension will be available on:
    - Right-click anywhere on the page
    - Select "Save Page to SaveToRead"
 
-3. **Save Selected Text**:
+3. **Save Selected Text as Highlight**:
    - Highlight any text
    - Right-click on the selection
    - Select "Save Selection to SaveToRead"
+   - The text will be saved as a note/highlight with the article
 
 ### Extension Popup
 
 1. Click the SaveToRead extension icon in your browser toolbar
-2. Click "Save This Page" to save the current tab
-3. Click "View My Articles" to open your saved articles
+2. **Toggle Auto-Snapshot**: Check the box to automatically generate snapshots (PDF/HTML)
+3. Click "Save This Page" to save the current tab
+4. Click "View My Articles" to open your saved articles
+5. **Queue Status**: See how many articles are queued for offline sync
+
+### Offline Mode
+
+The extension works even when you're offline:
+
+1. **Automatic Queuing**: Articles are automatically queued when you're offline
+2. **Visual Indicator**: Badge shows number of queued articles
+3. **Auto-Sync**: Queue is processed automatically when connection is restored
+4. **Manual Retry**: Queue is checked every minute for failed saves
 
 ## Authentication
 
@@ -101,7 +141,8 @@ When you save an article:
 ```
 extension/
 ├── manifest.json          # Extension manifest (v3)
-├── background.js          # Service worker for context menu
+├── background.js          # Service worker for context menu & offline queue
+├── content.js             # Content script for text selection
 ├── popup/
 │   ├── popup.html        # Extension popup UI
 │   ├── popup.css         # Popup styles
@@ -113,6 +154,33 @@ extension/
 │   └── icon128.png       # 128x128 icon
 └── README.md
 ```
+
+### Key Features Implementation
+
+**Keyboard Shortcuts** (`manifest.json`):
+```json
+{
+  "commands": {
+    "save-current-page": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      }
+    }
+  }
+}
+```
+
+**Offline Queue** (`background.js`):
+- Stores failed saves in `chrome.storage.local`
+- Retries automatically when online
+- Shows badge with queue count
+- Processes queue every minute
+
+**Text Selection** (`content.js`):
+- Captures selected text and context
+- Communicates with background script
+- Saves highlights as article notes
 
 ### Building Icons
 
@@ -133,7 +201,9 @@ You can use any image editor or online tool to create these icons. The recommend
   ```json
   {
     "url": "https://example.com/article",
-    "tags": []
+    "tags": [],
+    "autoSnapshot": true,
+    "notes": "Highlighted text: ..."
   }
   ```
 
@@ -141,9 +211,10 @@ You can use any image editor or online tool to create these icons. The recommend
 
 - `contextMenus`: Add "Save to SaveToRead" to right-click menu
 - `activeTab`: Access current tab URL and title
-- `storage`: Store auth token securely
-- `notifications`: Show save confirmations
+- `storage`: Store auth token and offline queue securely
+- `notifications`: Show save confirmations and queue status
 - `host_permissions`: Communicate with SaveToRead API
+- `content_scripts`: Capture text selections for highlights
 
 ## Configuration
 
@@ -194,6 +265,7 @@ const APP_URL = 'http://localhost:5173';
 2. Check browser console for errors
 3. Verify API URL is correct
 4. Check network tab for failed requests
+5. Look for queued items (orange badge on extension icon)
 
 ### Context menu not appearing
 
@@ -206,6 +278,20 @@ const APP_URL = 'http://localhost:5173';
 1. Check browser notification permissions
 2. Verify notifications are enabled for Chrome
 3. Check system notification settings
+
+### Keyboard shortcuts not working
+
+1. Check for conflicts in `chrome://extensions/shortcuts`
+2. Manually reassign shortcuts if needed
+3. Restart browser after changing shortcuts
+
+### Articles stuck in queue
+
+1. Check internet connection
+2. Verify you're logged in
+3. Click extension icon to see queue status
+4. Queue retries automatically every minute
+5. Check browser console for errors
 
 ## Contributing
 

@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import { SignInModal } from '../components/SignInModal';
 import { LogoIcon } from '../components/Logo';
+import { Footer } from '../components/Footer';
 import '../styles/landing.css';
 
 export function LandingPage() {
@@ -375,72 +376,7 @@ export function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-section">
-              <div className="footer-logo">
-                <LogoIcon size={28} className="text-orange-500" />
-                <span className="logo-text">SaveToRead</span>
-              </div>
-              <p className="footer-description">
-                Your personal reading library, stored in your own cloud.
-              </p>
-            </div>
-
-            <div className="footer-section">
-              <h4 className="footer-title">Product</h4>
-              <ul className="footer-links">
-                <li><a href="#features">Features</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#security">Security</a></li>
-                <li><a href="#integrations">Integrations</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-section">
-              <h4 className="footer-title">Company</h4>
-              <ul className="footer-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#blog">Blog</a></li>
-                <li><a href="#careers">Careers</a></li>
-                <li><a href="#contact">Contact</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-section">
-              <h4 className="footer-title">Resources</h4>
-              <ul className="footer-links">
-                <li><a href="#docs">Documentation</a></li>
-                <li><a href="#api">API</a></li>
-                <li><a href="#support">Support</a></li>
-                <li><a href="#status">Status</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-section">
-              <h4 className="footer-title">Legal</h4>
-              <ul className="footer-links">
-                <li><a href="#privacy">Privacy</a></li>
-                <li><a href="#terms">Terms</a></li>
-                <li><a href="#cookies">Cookies</a></li>
-                <li><a href="#gdpr">GDPR</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="footer-bottom">
-            <p className="footer-copyright">
-              © 2024 SaveToRead. All rights reserved.
-            </p>
-            <div className="footer-social">
-              <a href="#twitter" aria-label="Twitter">𝕏</a>
-              <a href="#github" aria-label="GitHub">GitHub</a>
-              <a href="#linkedin" aria-label="LinkedIn">LinkedIn</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Modals */}
       {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}

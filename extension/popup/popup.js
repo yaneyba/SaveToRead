@@ -15,6 +15,9 @@ const loginBtn = document.getElementById('login-btn');
 const savePageBtn = document.getElementById('save-page-btn');
 const viewArticlesBtn = document.getElementById('view-articles-btn');
 const logoutBtn = document.getElementById('logout-btn');
+const autoSnapshotCheckbox = document.getElementById('auto-snapshot-checkbox');
+const queueInfoEl = document.getElementById('queue-info');
+const queueCountEl = document.getElementById('queue-count');
 
 const pageTitleEl = document.getElementById('page-title');
 const pageUrlEl = document.getElementById('page-url');
@@ -39,6 +42,19 @@ async function init() {
 
     // Check authentication status
     const { authenticated } = await chrome.runtime.sendMessage({ action: 'getAuthStatus' });
+
+    if (authenticated) {
+      // Load auto-snapshot preference
+      const { autoSnapshot } = await chrome.storage.sync.get({ autoSnapshot: false });
+      autoSnapshotCheckbox.checked = autoSnapshot;
+
+      // Load queue info
+      const { saveQueue } = await chrome.storage.local.get({ saveQueue: [] });
+      if (saveQueue && saveQueue.length > 0) {
+        queueCountEl.textContent = saveQueue.length;
+        queueInfoEl.style.display = 'flex';
+      }
+    }
 
     showState(authenticated ? 'logged-in' : 'not-logged-in');
   } catch (error) {
@@ -91,7 +107,13 @@ savePageBtn.addEventListener('click', async () => {
     savePageBtn.disabled = true;
     savePageBtn.textContent = 'Saving...';
 
-    const response = await chrome.runtime.sendMessage({ action: 'saveCurrentPage' });
+    // Get auto-snapshot preference
+    const { autoSnapshot } = await chrome.storage.sync.get({ autoSnapshot: false });
+
+    const response = await chrome.runtime.sendMessage({ 
+      action: 'saveCurrentPage',
+      autoSnapshot: autoSnapshot
+    });
 
     if (response.success) {
       showSuccess('Page saved successfully!');
@@ -109,6 +131,11 @@ savePageBtn.addEventListener('click', async () => {
     savePageBtn.innerHTML = '<span class="icon">📚</span> Save This Page';
     savePageBtn.disabled = false;
   }
+});
+
+// Save auto-snapshot preference when checkbox changes
+autoSnapshotCheckbox.addEventListener('change', async () => {
+  await chrome.storage.sync.set({ autoSnapshot: autoSnapshotCheckbox.checked });
 });
 
 viewArticlesBtn.addEventListener('click', () => {

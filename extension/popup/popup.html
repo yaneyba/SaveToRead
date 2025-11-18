@@ -30,10 +30,24 @@
         <p id="page-url" class="url-text"></p>
       </div>
 
+      <!-- Options -->
+      <div class="options">
+        <label class="checkbox-label">
+          <input type="checkbox" id="auto-snapshot-checkbox">
+          <span>Auto-generate snapshot</span>
+        </label>
+      </div>
+
       <button id="save-page-btn" class="btn btn-primary">
         <span class="icon">📚</span>
         Save This Page
       </button>
+
+      <!-- Queue Info -->
+      <div id="queue-info" class="queue-info" style="display: none;">
+        <span class="icon">⏳</span>
+        <span id="queue-count">0</span> article(s) queued
+      </div>
 
       <div class="divider"></div>
 

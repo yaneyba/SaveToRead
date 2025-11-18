@@ -136,6 +136,7 @@ build_extension() {
   # Copy extension files to dist
   cp manifest.json dist/
   cp background.js dist/
+  cp content.js dist/
   cp -r popup dist/
   cp -r icons dist/
   
