@@ -66,21 +66,32 @@ SaveToRead/
 
 ```
 
+## Vision
+
+**Save articles, create snapshots, and store everything in your own cloud storage.**
+
+Google Drive, Dropbox, or OneDrive—you choose where your data lives.
+
 ## Features
 
-### Core Features
+### Core Features (Free Forever)
 - 📚 Save and organize articles with tags
 - 🖱️ **Browser extension** with right-click context menu
-- 📄 Offline snapshots (PDF/HTML) stored in user's cloud storage
-- ✍️ Reading interface with annotations and highlights
-- 🔄 Progress synchronization across devices
-- 🔐 Secure OAuth-based storage linking
-
-### Premium Features
+- 📄 Offline snapshots (PDF/HTML) stored in **your cloud storage**
 - ☁️ Cloud storage integration (Google Drive, Dropbox, OneDrive)
-- 📊 Advanced analytics
-- 🎨 Custom themes
-- 📱 Mobile apps
+- ✍️ Reading interface with focus mode
+- 🔐 Secure OAuth-based storage linking
+- 📤 Full data export and portability
+
+### Premium Features ($3/month)
+- 🔄 Multiple cloud storage connections (backup to 2+ clouds)
+- 📑 Advanced snapshot formats (EPUB, Markdown)
+- ⚡ Priority snapshot processing queue
+- 🔧 Bulk operations (re-snapshot, re-tag, export)
+- 🔌 API access for automation
+
+### Roadmap
+See [docs/ROADMAP.md](./docs/ROADMAP.md) for our product roadmap and vision.
 
 ## Getting Started
 

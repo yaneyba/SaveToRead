@@ -399,13 +399,22 @@ cd workers
 wrangler deploy
 ```
 
-## Future Enhancements
+## Future Architecture Considerations
 
-1. **Browser Extension**: Save articles from any webpage
-2. **Mobile Apps**: Native iOS/Android apps
-3. **RSS Feed Integration**: Auto-import from RSS feeds
-4. **AI Summaries**: Automatic article summarization
-5. **Collaborative Collections**: Share article collections
-6. **Offline Mode**: Progressive Web App with service workers
-7. **Full-Text Search**: Implement search using Cloudflare R2 + external search service
-8. **Export Features**: Export to Notion, Obsidian, etc.
+See [ROADMAP.md](./ROADMAP.md) for the full feature roadmap.
+
+### Architectural Improvements Planned
+
+1. **Snapshot Processing Queue**: Implement reliable queue for snapshot generation with retry logic
+2. **Multi-Cloud Redundancy**: Support simultaneous uploads to multiple cloud providers
+3. **Self-Hosted Option**: Docker compose setup for users who want full control
+4. **Snapshot Format Plugins**: Extensible architecture for custom snapshot formats (EPUB, Markdown, etc.)
+5. **Local-First Option**: Support for users who prefer local storage over cloud
+
+### Staying True to Vision
+
+All architectural decisions prioritize:
+- **User data ownership**: Content stored in user's cloud, not ours
+- **Privacy**: No tracking, no analytics on user content
+- **Simplicity**: Three core operations (save, snapshot, store) executed flawlessly
+- **No lock-in**: Standard formats, easy export, self-hosting support
