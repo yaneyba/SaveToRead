@@ -20,7 +20,7 @@ export function LandingPage() {
       <nav className="hero-nav">
         <div className="nav-content">
           <div className="logo">
-            <LogoIcon size={32} className="text-orange-500" />
+            <LogoIcon size={32} className="logo-icon" />
             <span className="logo-text">SaveToRead</span>
           </div>
           <div className="nav-actions">
@@ -44,16 +44,22 @@ export function LandingPage() {
         
         {/* Mobile Menu */}
         {showMobileMenu && (
-          <div className="mobile-menu">
-            <button onClick={() => { setShowSignIn(true); setShowMobileMenu(false); }} className="mobile-menu-item">
-              Sign In
-            </button>
-            <button onClick={() => { setShowSignUp(true); setShowMobileMenu(false); }} className="mobile-menu-item">
-              Get Started
-            </button>
-            <a href="#features" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>Features</a>
-            <a href="#pricing" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>Pricing</a>
-          </div>
+          <>
+            <div 
+              className="mobile-menu-overlay" 
+              onClick={() => setShowMobileMenu(false)}
+            />
+            <div className="mobile-menu">
+              <button onClick={() => { setShowSignIn(true); setShowMobileMenu(false); }} className="mobile-menu-item">
+                Sign In
+              </button>
+              <button onClick={() => { setShowSignUp(true); setShowMobileMenu(false); }} className="mobile-menu-item">
+                Get Started
+              </button>
+              <a href="#features" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>Features</a>
+              <a href="#pricing" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>Pricing</a>
+            </div>
+          </>
         )}
       </nav>
 

@@ -59,10 +59,17 @@
   font-size: 1.5rem;
   font-weight: 700;
   flex-shrink: 0;
+  color: white;
+}
+
+.logo-icon {
+  color: #FF6F26;
+  flex-shrink: 0;
 }
 
 .logo-text {
   white-space: nowrap;
+  color: white;
 }
 
 @media (max-width: 640px) {
@@ -114,6 +121,23 @@
   .nav-actions .btn-text,
   .nav-actions .btn-primary {
     display: none;
+  }
+}
+
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 110;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
