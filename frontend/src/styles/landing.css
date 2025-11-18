@@ -26,9 +26,13 @@
 }
 
 .hero-nav {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 100;
   padding: 1.5rem 2rem;
+  background: rgba(102, 126, 234, 0.95);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 640px) {
