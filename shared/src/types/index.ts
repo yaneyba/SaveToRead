@@ -53,6 +53,9 @@ export interface Article {
   snapshotPdfUrl?: string;
   snapshotHtmlUrl?: string;
   storageProvider?: StorageProvider;
+  // Content metrics
+  wordCount?: number;
+  readingTimeMinutes?: number; // Estimated reading time in minutes
 }
 
 export interface CreateArticleInput {
@@ -251,6 +254,7 @@ export interface SnapshotSettings {
     maxWidth?: string;
     theme?: 'light' | 'dark' | 'sepia';
   };
+  organizationStrategy?: 'date' | 'domain' | 'tags' | 'none';
 }
 
 export interface NotificationSettings {

@@ -2,13 +2,13 @@
 
 **Last Updated:** 2025-11-18
 **Branch:** `claude/implement-roadmap-phases-01F8h43wixWjqtvU4jQDiqgD`
-**Overall Progress:** 13/57 items completed (23%)
+**Overall Progress:** 15/57 items completed (26%)
 
 ---
 
 ## ✅ Completed Features
 
-### Phase 1: Core Stability (5/14 completed)
+### Phase 1: Core Stability (7/14 completed)
 
 #### Snapshot Improvements
 - ✅ **Better PDF rendering with custom styling options**
@@ -38,9 +38,20 @@
 
 #### Cloud Storage Enhancements
 - 🔄 Configurable folder structure (TODO)
-- 🔄 Automatic organization by date/tags/domain (TODO)
+
+- ✅ **Automatic organization by date/tags/domain**
+  - Added `organizationStrategy` to SnapshotSettings
+  - Support for date, domain, tags, or none strategies
+  - `generateFolderPath()` utility function
+  - Automatic path generation based on article metadata
+
 - 🔄 Storage quota monitoring and warnings (Partially done)
-- 🔄 Conflict resolution for duplicate saves (TODO)
+
+- ✅ **Conflict resolution for duplicate saves**
+  - Duplicate detection prevents conflicts
+  - Returns existing article if duplicate found
+  - User can choose to save anyway or cancel
+
 - 🔄 Verify snapshot integrity after upload (TODO)
 
 #### Browser Extension
@@ -145,9 +156,31 @@
 
 ---
 
-### Phase 4: Advanced Features (0/8 completed)
+### Phase 4: Advanced Features (2/8 completed)
 
-All items pending implementation.
+#### Smart Organization
+- 🔄 Auto-tagging based on content (TODO)
+
+- ✅ **Duplicate detection**
+  - Smart URL normalization (case-insensitive, trailing slashes)
+  - Query parameter optional comparison
+  - POST `/api/articles/check-duplicate` endpoint
+  - Returns 409 Conflict if duplicate exists
+  - Prevents saving the same URL twice
+
+- ✅ **Reading time estimation**
+  - Automatic word count calculation
+  - Estimates reading time at 225 words/minute
+  - Added `wordCount` and `readingTimeMinutes` to Article type
+  - Integrated into article creation
+
+- 🔄 Full-text search (TODO)
+
+#### Snapshot Intelligence
+- 🔄 Reader mode extraction (TODO)
+- 🔄 Image optimization (TODO)
+- 🔄 Video/audio preservation (TODO)
+- 🔄 Web annotation preservation (TODO)
 
 ---
 
@@ -181,6 +214,15 @@ All items pending implementation.
    - Data transformation and mapping
    - 400+ lines of code
 
+4. **Content Analysis Service** (`workers/src/services/content-analysis.ts`)
+   - Word count calculation from HTML/text
+   - Reading time estimation (225 WPM)
+   - URL normalization for duplicate detection
+   - Duplicate URL comparison
+   - Domain extraction
+   - Folder path generation for organization
+   - 150+ lines of code
+
 ### API Endpoints Added
 
 | Method | Endpoint | Description |
@@ -188,6 +230,7 @@ All items pending implementation.
 | POST | `/api/articles/:id/snapshot` | Generate snapshot (PDF/HTML/EPUB/MD/TXT) |
 | POST | `/api/articles/batch/snapshot` | Batch snapshot generation |
 | POST | `/api/articles/batch/operations` | Bulk operations |
+| POST | `/api/articles/check-duplicate` | Check if URL is duplicate |
 | GET | `/api/export/all` | Export all data to JSON |
 | GET | `/api/export/csv` | Export articles to CSV |
 | POST | `/api/export/import/pocket` | Import from Pocket |
@@ -195,6 +238,14 @@ All items pending implementation.
 | POST | `/api/export/import/raindrop` | Import from Raindrop.io |
 
 ### Database Schema Updates
+
+**Article Extended:**
+```typescript
+{
+  wordCount?: number;
+  readingTimeMinutes?: number;
+}
+```
 
 **UserSettings Extended:**
 ```typescript
@@ -211,6 +262,7 @@ All items pending implementation.
       maxWidth?: string;
       theme?: 'light' | 'dark' | 'sepia';
     };
+    organizationStrategy?: 'date' | 'domain' | 'tags' | 'none';
   }
 }
 ```
@@ -226,13 +278,14 @@ All items pending implementation.
 
 ## 📊 Statistics
 
-- **Files Created:** 5 new files
-- **Files Modified:** 7 existing files
-- **Lines of Code Added:** ~1,955 lines
-- **New API Endpoints:** 8 endpoints
+- **Files Created:** 6 new files
+- **Files Modified:** 9 existing files
+- **Lines of Code Added:** ~2,200 lines
+- **New API Endpoints:** 9 endpoints
 - **Snapshot Formats Supported:** 5 (PDF, HTML, EPUB, Markdown, Text)
 - **Import Services Supported:** 3 (Pocket, Instapaper, Raindrop.io)
 - **Export Formats:** 2 (JSON, CSV)
+- **Content Analysis Features:** Word count, reading time, duplicate detection
 
 ---
 
@@ -240,10 +293,10 @@ All items pending implementation.
 
 ### High Priority (Phase 1 Completion)
 1. Implement configurable folder structure in cloud storage
-2. Add automatic organization by date/tags/domain
-3. Enhance storage quota monitoring with warnings
-4. Add snapshot integrity verification
-5. Update browser extension for one-click save with snapshots
+2. Enhance storage quota monitoring with warnings
+3. Add snapshot integrity verification
+4. Update browser extension for one-click save with snapshots
+5. Implement reading interface with focus mode
 
 ### Medium Priority (Phase 2 Completion)
 1. Add more cloud provider support (Box, pCloud, Nextcloud)
