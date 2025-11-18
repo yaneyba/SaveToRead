@@ -20,7 +20,7 @@ export function LandingPage() {
       <nav className="hero-nav">
         <div className="nav-content">
           <div className="logo">
-            <LogoIcon size={32} className="text-orange-500" />
+            <LogoIcon size={32} className="logo-icon" />
             <span className="logo-text">SaveToRead</span>
           </div>
           <div className="nav-actions">

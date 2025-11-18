@@ -59,10 +59,17 @@
   font-size: 1.5rem;
   font-weight: 700;
   flex-shrink: 0;
+  color: white;
+}
+
+.logo-icon {
+  color: #FF6F26;
+  flex-shrink: 0;
 }
 
 .logo-text {
   white-space: nowrap;
+  color: white;
 }
 
 @media (max-width: 640px) {
