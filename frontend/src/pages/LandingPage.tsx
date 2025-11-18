@@ -16,47 +16,49 @@ export function LandingPage() {
 
   return (
     <div className="landing-page">
+      {/* Sticky Navigation */}
+      <nav className="hero-nav">
+        <div className="nav-content">
+          <div className="logo">
+            <LogoIcon size={32} className="text-orange-500" />
+            <span className="logo-text">SaveToRead</span>
+          </div>
+          <div className="nav-actions">
+            <button onClick={() => setShowSignIn(true)} className="btn-text">
+              Sign In
+            </button>
+            <button onClick={() => setShowSignUp(true)} className="btn-primary">
+              Get Started
+            </button>
+            <button 
+              onClick={() => setShowMobileMenu(!showMobileMenu)} 
+              className="hamburger-menu"
+              aria-label="Toggle menu"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+        </div>
+        
+        {/* Mobile Menu */}
+        {showMobileMenu && (
+          <div className="mobile-menu">
+            <button onClick={() => { setShowSignIn(true); setShowMobileMenu(false); }} className="mobile-menu-item">
+              Sign In
+            </button>
+            <button onClick={() => { setShowSignUp(true); setShowMobileMenu(false); }} className="mobile-menu-item">
+              Get Started
+            </button>
+            <a href="#features" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>Features</a>
+            <a href="#pricing" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>Pricing</a>
+          </div>
+        )}
+      </nav>
+
       {/* Hero Section */}
       <section className="hero">
-        <nav className="hero-nav">
-          <div className="nav-content">
-            <div className="logo">
-              <LogoIcon size={32} className="text-orange-500" />
-              <span className="logo-text">SaveToRead</span>
-            </div>
-            <div className="nav-actions">
-              <button onClick={() => setShowSignIn(true)} className="btn-text">
-                Sign In
-              </button>
-              <button onClick={() => setShowSignUp(true)} className="btn-primary">
-                Get Started
-              </button>
-              <button 
-                onClick={() => setShowMobileMenu(!showMobileMenu)} 
-                className="hamburger-menu"
-                aria-label="Toggle menu"
-              >
-                <span></span>
-                <span></span>
-                <span></span>
-              </button>
-            </div>
-          </div>
-          
-          {/* Mobile Menu */}
-          {showMobileMenu && (
-            <div className="mobile-menu">
-              <button onClick={() => { setShowSignIn(true); setShowMobileMenu(false); }} className="mobile-menu-item">
-                Sign In
-              </button>
-              <button onClick={() => { setShowSignUp(true); setShowMobileMenu(false); }} className="mobile-menu-item">
-                Get Started
-              </button>
-              <a href="#features" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>Features</a>
-              <a href="#pricing" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>Pricing</a>
-            </div>
-          )}
-        </nav>
 
         <div className="hero-content">
           <div className="hero-badge">
