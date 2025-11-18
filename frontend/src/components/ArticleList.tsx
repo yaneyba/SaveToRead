@@ -5,7 +5,7 @@
  */
 
 import { useState } from 'react';
-import { useArticles } from '../hooks/useArticles';
+import { useArticles } from '@/hooks/useArticles';
 import type { Article } from '@savetoread/shared';
 
 export function ArticleList() {

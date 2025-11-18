@@ -4,9 +4,9 @@
  * Reusable footer component for all pages
  */
 
-import { LogoWordmark } from './Logo';
-import { SocialIcon } from './SocialIcon';
-import { FOOTER_LINKS, SOCIAL_LINKS, FOOTER_CONTENT } from '../config/links';
+import { LogoWordmark } from '@/components/Logo';
+import { SocialIcon } from '@/components/SocialIcon';
+import { FOOTER_LINKS, SOCIAL_LINKS, FOOTER_CONTENT } from '@/config/links';
 
 interface FooterProps {
   variant?: 'default' | 'minimal';

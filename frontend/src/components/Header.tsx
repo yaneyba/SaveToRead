@@ -5,10 +5,10 @@
  */
 
 import { useState } from 'react';
-import { LogoWordmark } from './Logo';
-import { InfoModal } from './InfoModal';
-import { useAuth } from '../hooks/useAuth';
-import '../styles/modal.css';
+import { LogoWordmark } from '@/components/Logo';
+import { InfoModal } from '@/components/InfoModal';
+import { useAuth } from '@/hooks/useAuth';
+import '@/styles/modal.css';
 
 interface HeaderProps {
   onMenuClick?: () => void;

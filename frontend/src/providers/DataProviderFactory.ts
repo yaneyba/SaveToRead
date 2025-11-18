@@ -5,9 +5,9 @@
  * Allows switching between different implementations based on environment.
  */
 
-import { IDataProvider } from './IDataProvider';
-import { ApiDataProvider } from './ApiDataProvider';
-import { MockDataProvider } from './MockDataProvider';
+import { IDataProvider } from '@/providers/IDataProvider';
+import { ApiDataProvider } from '@/providers/ApiDataProvider';
+import { MockDataProvider } from '@/providers/MockDataProvider';
 
 export enum DataProviderType {
   API = 'api',

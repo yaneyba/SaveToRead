@@ -5,10 +5,10 @@
  */
 
 import { useState } from 'react';
-import { SignInModal } from '../components/SignInModal';
-import { LogoWordmark } from '../components/Logo';
-import { Footer } from '../components/Footer';
-import '../styles/landing.css';
+import { SignInModal } from '@/components/SignInModal';
+import { LogoWordmark } from '@/components/Logo';
+import { Footer } from '@/components/Footer';
+import '@/styles/landing.css';
 
 export function LandingPage() {
   const [showSignIn, setShowSignIn] = useState(false);

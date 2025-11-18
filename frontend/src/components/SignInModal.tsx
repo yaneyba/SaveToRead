@@ -3,8 +3,8 @@
  */
 
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import '../styles/modal.css';
+import { useAuth } from '@/hooks/useAuth';
+import '@/styles/modal.css';
 
 interface SignInModalProps {
   mode?: 'signin' | 'signup';
