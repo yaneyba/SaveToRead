@@ -72,7 +72,11 @@ export interface Page {
       right?: string;
       bottom?: string;
       left?: string;
-    }): Promise<ArrayBuffer>;
+    };
+    displayHeaderFooter?: boolean;
+    headerTemplate?: string;
+    footerTemplate?: string;
+  }): Promise<ArrayBuffer>;
 
   addStyleTag(options: { content: string }): Promise<void>;
 
