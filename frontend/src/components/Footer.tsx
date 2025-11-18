@@ -23,7 +23,6 @@ export function Footer({ variant = 'default' }: FooterProps) {
           <div className="footer-minimal-links">
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
-            <a href="/support">Support</a>
           </div>
         </div>
       </footer>
@@ -45,17 +44,6 @@ export function Footer({ variant = 'default' }: FooterProps) {
             </p>
             <div className="footer-social">
               <a
-                href="https://twitter.com/savetoread"
-                className="social-link"
-                aria-label="Twitter"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-              </a>
-              <a
                 href="https://github.com/yaneyba/savetoread"
                 className="social-link"
                 aria-label="GitHub"
@@ -69,33 +57,12 @@ export function Footer({ variant = 'default' }: FooterProps) {
             </div>
           </div>
 
-          {/* Product Links */}
-          <div className="footer-section">
-            <h4 className="footer-title">Product</h4>
-            <ul className="footer-links">
-              <li><a href="/features">Features</a></li>
-              <li><a href="/pricing">Pricing</a></li>
-              <li><a href="/integrations">Integrations</a></li>
-            </ul>
-          </div>
-
-          {/* Company Links */}
-          <div className="footer-section">
-            <h4 className="footer-title">Company</h4>
-            <ul className="footer-links">
-              <li><a href="/about">About</a></li>
-              <li><a href="/blog">Blog</a></li>
-              <li><a href="/contact">Contact</a></li>
-            </ul>
-          </div>
-
           {/* Resources Links */}
           <div className="footer-section">
             <h4 className="footer-title">Resources</h4>
             <ul className="footer-links">
-              <li><a href="/docs">Documentation</a></li>
-              <li><a href="/support">Support</a></li>
-              <li><a href="/status">Status</a></li>
+              <li><a href="https://github.com/yaneyba/savetoread" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              <li><a href="https://github.com/yaneyba/savetoread/issues" target="_blank" rel="noopener noreferrer">Support</a></li>
             </ul>
           </div>
         </div>
