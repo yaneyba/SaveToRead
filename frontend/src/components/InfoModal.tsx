@@ -5,6 +5,9 @@
  * that matches the site's design system
  */
 
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
+
 interface InfoModalProps {
   title: string;
   message: string;
@@ -12,7 +15,15 @@ interface InfoModalProps {
 }
 
 export function InfoModal({ title, message, onClose }: InfoModalProps) {
-  return (
+  useEffect(() => {
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  const modalContent = (
     <div className="modal-overlay" onClick={onClose}>
       <div 
         className="modal-content info-modal" 
@@ -40,4 +51,6 @@ export function InfoModal({ title, message, onClose }: InfoModalProps) {
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
