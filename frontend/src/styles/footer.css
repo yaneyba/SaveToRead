@@ -18,14 +18,14 @@
 
 .footer-content {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
   gap: 3rem;
   margin-bottom: 2.5rem;
 }
 
 @media (max-width: 768px) {
   .footer-content {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 2rem;
   }
 }
