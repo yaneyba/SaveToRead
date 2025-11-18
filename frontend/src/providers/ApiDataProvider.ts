@@ -21,7 +21,7 @@ import type {
   UserAnalytics,
   ApiResponse
 } from '@savetoread/shared';
-import { IDataProvider } from './IDataProvider';
+import { IDataProvider } from '@/providers/IDataProvider';
 
 export interface ApiDataProviderConfig {
   baseUrl: string;

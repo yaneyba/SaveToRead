@@ -26,7 +26,7 @@ import {
   StorageProvider,
   AnnotationType
 } from '@savetoread/shared';
-import { IDataProvider } from './IDataProvider';
+import { IDataProvider } from '@/providers/IDataProvider';
 
 export class MockDataProvider implements IDataProvider {
   private mockUser: User = {
