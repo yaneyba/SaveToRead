@@ -85,7 +85,11 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
 
         {/* Right side - Search and User Menu */}
         <div className="header-right">
-          <button className="search-button" aria-label="Search">
+          <button 
+            className="search-button" 
+            onClick={() => showComingSoon('Search')}
+            aria-label="Search"
+          >
             <svg
               width="20"
               height="20"
@@ -100,7 +104,11 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
             </svg>
           </button>
 
-          <button className="add-button" aria-label="Add article">
+          <button 
+            className="add-button" 
+            onClick={() => showComingSoon('Quick Add')}
+            aria-label="Add article"
+          >
             <svg
               width="20"
               height="20"
