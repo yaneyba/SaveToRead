@@ -3,6 +3,33 @@
  * Handles text selection and highlighting
  */
 
+// Sync auth token from website to extension (only on savetoread.com)
+if (window.location.hostname === 'savetoread.com' || window.location.hostname.endsWith('.savetoread.pages.dev')) {
+  // Check localStorage for auth token (frontend uses 'auth_token')
+  const checkAndSyncToken = () => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      console.log('[SaveToRead Extension] Found auth token, syncing to extension');
+      chrome.storage.sync.set({ authToken: token }, () => {
+        console.log('[SaveToRead Extension] Auth token synced successfully');
+      });
+    }
+  };
+
+  // Check immediately
+  checkAndSyncToken();
+
+  // Also listen for storage changes
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'auth_token') {
+      checkAndSyncToken();
+    }
+  });
+
+  // Check periodically (every 2 seconds) for token changes
+  setInterval(checkAndSyncToken, 2000);
+}
+
 // Listen for messages from background script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'getSelectedText') {

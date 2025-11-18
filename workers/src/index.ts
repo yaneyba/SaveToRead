@@ -31,8 +31,28 @@ const app = new Hono<{ Bindings: Env; Variables: { userId?: string } }>();
 // Global middleware
 app.use('*', logger());
 app.use('*', cors({
-  origin: (origin) => origin, // Allow all origins in development, restrict in production
-  credentials: true
+  origin: (origin) => {
+    // Allow specific origins
+    const allowedOrigins = [
+      'https://savetoread.com',
+      'https://savetoread.pages.dev',
+      'http://localhost:3000',
+      'http://localhost:5173'
+    ];
+
+    // Also allow any pages.dev subdomain for preview deployments
+    if (origin && (allowedOrigins.includes(origin) || origin.endsWith('.savetoread.pages.dev'))) {
+      return origin;
+    }
+
+    // Default to savetoread.com if no origin
+    return 'https://savetoread.com';
+  },
+  credentials: true,
+  allowHeaders: ['Content-Type', 'Authorization'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  exposeHeaders: ['Content-Length', 'X-Request-Id'],
+  maxAge: 600
 }));
 
 // Health check

@@ -15,9 +15,13 @@ ONEDRIVE_CLIENT_SECRET=your-onedrive-client-secret
 STRIPE_SECRET_KEY=sk_test_your-stripe-secret-key
 STRIPE_WEBHOOK_SECRET=whsec_your-webhook-secret
 
-# Application URLs
+# Application URLs (local dev uses localhost, production uses savetoread.com)
 APP_URL=http://localhost:3000
 API_URL=http://localhost:8787
+
+# Production URLs (use these when deploying)
+# APP_URL=https://savetoread.com
+# API_URL=https://api.savetoread.com
 
 # Encryption key for OAuth tokens
 ENCRYPTION_KEY=your-32-char-encryption-key-here

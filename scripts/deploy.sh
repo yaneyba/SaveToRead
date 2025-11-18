@@ -94,8 +94,7 @@ deploy_frontend() {
       local end_time=$(date +%s)
       local duration=$((end_time - start_time))
       echo -e "${GREEN}✅ Frontend deployment successful (${duration}s)${NC}"
-      echo "🔗 Production: https://savetoread.pages.dev"
-      echo "🔗 Dev: https://dev.savetoread.pages.dev"
+      echo "🔗 Production: https://savetoread.com"
   else
       echo -e "${RED}❌ Frontend deployment failed${NC}"
       exit 1
@@ -115,7 +114,7 @@ deploy_workers() {
       local end_time=$(date +%s)
       local duration=$((end_time - start_time))
       echo -e "${GREEN}✅ Workers deployment successful (${duration}s)${NC}"
-      echo "🔗 API URL: https://savetoread-api.yeb404974.workers.dev"
+      echo "🔗 API URL: https://api.savetoread.com"
   else
       echo -e "${RED}❌ Workers deployment failed${NC}"
       exit 1
@@ -184,8 +183,8 @@ echo ""
 echo -e "${GREEN}🎉 Deployment Complete! (Total: ${TOTAL_DURATION}s)${NC}"
 echo ""
 echo "📋 Quick Tests:"
-echo "  • Homepage: curl -I https://savetoread.pages.dev"
-echo "  • API Health: curl https://savetoread-api.yeb404974.workers.dev/api/articles"
+echo "  • Homepage: curl -I https://savetoread.com"
+echo "  • API Health: curl https://api.savetoread.com/api/articles"
 echo ""
 echo "📊 Monitoring:"
 echo "  • Logs: wrangler tail (Workers) or wrangler pages deployment tail (Pages)"

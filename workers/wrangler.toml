@@ -4,6 +4,9 @@ main = "src/index.ts"
 compatibility_date = "2023-12-18"
 compatibility_flags = ["nodejs_compat"]
 
+# Override existing DNS records for custom domains
+workers_dev = false
+
 # KV Namespaces
 [[kv_namespaces]]
 binding = "ARTICLES"
@@ -39,6 +42,11 @@ new_sqlite_classes = ["RateLimiter", "ReadingSession"]
 # Browser Rendering for PDF/HTML snapshots
 [browser]
 binding = "BROWSER"
+
+# Custom domain routes
+[[routes]]
+pattern = "api.savetoread.com/*"
+zone_name = "savetoread.com"
 
 # Environment variables (use .dev.vars for local development)
 [env.production]

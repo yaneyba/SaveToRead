@@ -3,7 +3,7 @@
  * Handles context menu creation and article saving
  */
 
-const API_URL = 'https://savetoread.app';
+const API_URL = 'https://api.savetoread.com';
 const APP_URL = 'https://savetoread.com';
 
 // Queue for offline saves
@@ -46,6 +46,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // Handle context menu clicks
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  console.log('[SaveToRead] Context menu clicked:', info.menuItemId);
   let url = '';
   let title = '';
   let highlight = null;
