@@ -6,12 +6,13 @@
 
 import { AuthProvider } from './components/AuthProvider';
 import { ArticleList } from './components/ArticleList';
-import { LogoIcon } from './components/Logo';
+import { Header } from './components/Header';
+import { Footer } from './components/Footer';
 import { LandingPage } from './pages/LandingPage';
 import { useAuth } from './hooks/useAuth';
 
 function AppContent() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -28,20 +29,13 @@ function AppContent() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <div className="flex items-center gap-2">
-          <LogoIcon size={32} className="text-orange-500" />
-          <h1>SaveToRead</h1>
-        </div>
-        <div className="user-info">
-          <span>{user.displayName}</span>
-          <button onClick={signOut}>Sign Out</button>
-        </div>
-      </header>
+      <Header />
 
       <main className="app-main">
         <ArticleList />
       </main>
+
+      <Footer variant="minimal" />
     </div>
   );
 }
