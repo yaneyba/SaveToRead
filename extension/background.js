@@ -23,21 +23,21 @@ chrome.runtime.onInstalled.addListener(() => {
   // Context menu for links
   chrome.contextMenus.create({
     id: 'save-link-to-read',
-    title: 'Save to SaveToRead',
+    title: 'Save to Read',
     contexts: ['link']
   });
 
   // Context menu for pages
   chrome.contextMenus.create({
     id: 'save-page-to-read',
-    title: 'Save Page to SaveToRead',
+    title: 'Save Page to Read',
     contexts: ['page']
   });
 
   // Context menu for selected text with link
   chrome.contextMenus.create({
     id: 'save-selection-to-read',
-    title: 'Save Selection to SaveToRead',
+    title: 'Save Selection to Read',
     contexts: ['selection']
   });
 
@@ -83,6 +83,21 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
   if (!url) {
     console.error('No URL found to save');
+    return;
+  }
+
+  // Prevent saving extension pages, chrome pages, and local files
+  if (url.startsWith('chrome://') || 
+      url.startsWith('chrome-extension://') || 
+      url.startsWith('about:') || 
+      url.startsWith('file://')) {
+    console.log('[SaveToRead] Blocked attempt to save restricted page:', url);
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: 'icons/icon48.png',
+      title: 'SaveToRead',
+      message: 'Cannot save browser pages or extension pages'
+    });
     return;
   }
 
