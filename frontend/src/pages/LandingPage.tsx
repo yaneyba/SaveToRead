@@ -12,6 +12,7 @@ import '../styles/landing.css';
 export function LandingPage() {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
     <div className="landing-page">
@@ -30,8 +31,31 @@ export function LandingPage() {
               <button onClick={() => setShowSignUp(true)} className="btn-primary">
                 Get Started
               </button>
+              <button 
+                onClick={() => setShowMobileMenu(!showMobileMenu)} 
+                className="hamburger-menu"
+                aria-label="Toggle menu"
+              >
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
             </div>
           </div>
+          
+          {/* Mobile Menu */}
+          {showMobileMenu && (
+            <div className="mobile-menu">
+              <button onClick={() => { setShowSignIn(true); setShowMobileMenu(false); }} className="mobile-menu-item">
+                Sign In
+              </button>
+              <button onClick={() => { setShowSignUp(true); setShowMobileMenu(false); }} className="mobile-menu-item">
+                Get Started
+              </button>
+              <a href="#features" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>Features</a>
+              <a href="#pricing" className="mobile-menu-item" onClick={() => setShowMobileMenu(false)}>Pricing</a>
+            </div>
+          )}
         </nav>
 
         <div className="hero-content">
