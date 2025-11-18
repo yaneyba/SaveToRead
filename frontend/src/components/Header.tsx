@@ -6,7 +6,9 @@
 
 import { useState } from 'react';
 import { LogoIcon } from './Logo';
+import { InfoModal } from './InfoModal';
 import { useAuth } from '../hooks/useAuth';
+import '../styles/modal.css';
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -16,6 +18,7 @@ interface HeaderProps {
 export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
   const { user, signOut } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [modalInfo, setModalInfo] = useState<{ title: string; message: string } | null>(null);
 
   const handleSignOut = async () => {
     try {
@@ -24,6 +27,14 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
     } catch (error) {
       console.error('Failed to sign out:', error);
     }
+  };
+
+  const showComingSoon = (feature: string) => {
+    setShowUserMenu(false);
+    setModalInfo({
+      title: `${feature} Coming Soon!`,
+      message: `We're working hard to bring you the ${feature.toLowerCase()} feature. Stay tuned for updates!`
+    });
   };
 
   return (
@@ -136,7 +147,7 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
 
                   <nav className="user-menu-nav">
                     <button
-                      onClick={(e) => { e.preventDefault(); alert('Settings page coming soon!'); }}
+                      onClick={() => showComingSoon('Settings')}
                       className="user-menu-item"
                     >
                       <svg
@@ -153,7 +164,7 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
                       Settings
                     </button>
                     <button
-                      onClick={(e) => { e.preventDefault(); alert('Cloud Storage page coming soon!'); }}
+                      onClick={() => showComingSoon('Cloud Storage')}
                       className="user-menu-item"
                     >
                       <svg
@@ -169,7 +180,7 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
                       Cloud Storage
                     </button>
                     <button
-                      onClick={(e) => { e.preventDefault(); alert('Billing page coming soon!'); }}
+                      onClick={() => showComingSoon('Billing')}
                       className="user-menu-item"
                     >
                       <svg
@@ -213,6 +224,14 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
           </div>
         </div>
       </div>
+
+      {modalInfo && (
+        <InfoModal
+          title={modalInfo.title}
+          message={modalInfo.message}
+          onClose={() => setModalInfo(null)}
+        />
+      )}
     </header>
   );
 }
