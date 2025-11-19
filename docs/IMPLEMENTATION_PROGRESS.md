@@ -664,7 +664,7 @@ All items pending implementation.
 - [Service Worker API](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
 - [PWA Best Practices](https://web.dev/progressive-web-apps/)
 - [Puppeteer Documentation](https://pptr.dev/)
-- [SEO Strategy](../SEO_STRATEGY.md)
+- [SEO Strategy](marketing/SEO_STRATEGY.md)
 
 ---
 
