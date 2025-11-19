@@ -4,7 +4,7 @@
  * Custom hook for managing articles using the DataProvider
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Article, ListArticlesParams, PaginatedResponse } from '@savetoread/shared';
 import { useDataProvider } from '@/providers/DataProviderFactory';
 
@@ -14,12 +14,16 @@ export function useArticles(params?: ListArticlesParams) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<Omit<PaginatedResponse<Article>, 'items'> | null>(null);
+  
+  // Use ref to track params to avoid infinite loops
+  const paramsRef = useRef(params);
+  paramsRef.current = params;
 
   const fetchArticles = useCallback(async () => {
     setLoading(true);
     setError(null);
 
-    const response = await dataProvider.listArticles(params);
+    const response = await dataProvider.listArticles(paramsRef.current);
 
     if (response.success && response.data) {
       setArticles(response.data.items);
@@ -34,12 +38,14 @@ export function useArticles(params?: ListArticlesParams) {
     }
 
     setLoading(false);
-  }, [dataProvider, params]);
+  }, [dataProvider]);
 
   useEffect(() => {
     fetchArticles();
-    
-    // Listen for article saved from extension
+  }, [fetchArticles, params?.page, params?.pageSize]);
+
+  // Listen for article saved from extension - separate effect
+  useEffect(() => {
     const handleArticleSaved = () => {
       console.log('[SaveToRead] Article saved from extension, refreshing...');
       fetchArticles();
