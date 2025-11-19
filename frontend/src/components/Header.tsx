@@ -84,6 +84,28 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
 
         {/* Right side - Search and User Menu */}
         <div className="header-right">
+          {showMenu && (
+            <button
+              className="menu-button-mobile"
+              onClick={onMenuClick}
+              aria-label="Toggle menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+          )}
+
           <button 
             className="search-button" 
             onClick={() => showComingSoon('Search')}
@@ -150,9 +172,25 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
                     </div>
                   </div>
 
-                  <div className="user-menu-divider" />
-
                   <nav className="user-menu-nav">
+                    <div className="user-menu-section-label">Account</div>
+                    <button
+                      onClick={() => showComingSoon('Profile')}
+                      className="user-menu-item"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      Profile
+                    </button>
                     <button
                       onClick={() => showComingSoon('Settings')}
                       className="user-menu-item"
@@ -170,6 +208,12 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
                       </svg>
                       Settings
                     </button>
+                  </nav>
+
+                  <div className="user-menu-divider" />
+
+                  <nav className="user-menu-nav">
+                    <div className="user-menu-section-label">Storage</div>
                     <button
                       onClick={() => showComingSoon('Cloud Storage')}
                       className="user-menu-item"
@@ -186,6 +230,12 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
                       </svg>
                       Cloud Storage
                     </button>
+                  </nav>
+
+                  <div className="user-menu-divider" />
+
+                  <nav className="user-menu-nav">
+                    <div className="user-menu-section-label">Subscription</div>
                     <button
                       onClick={() => showComingSoon('Billing')}
                       className="user-menu-item"

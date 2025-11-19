@@ -6,7 +6,6 @@
 
 import { AuthProvider } from '@/components/AuthProvider';
 import { Dashboard } from '@/pages/Dashboard';
-import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { LandingPage } from '@/pages/LandingPage';
 import { useAuth } from '@/hooks/useAuth';
@@ -29,8 +28,6 @@ function AppContent() {
 
   return (
     <div className="app">
-      <Header />
-
       <main className="app-main">
         <Dashboard />
       </main>

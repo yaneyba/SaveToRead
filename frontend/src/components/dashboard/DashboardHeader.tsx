@@ -18,8 +18,10 @@ export function DashboardHeader({ userName, stats }: DashboardHeaderProps) {
   return (
     <div className="dashboard-header">
       <div className="dashboard-welcome">
-        <h1>Welcome back, {userName || 'there'}!</h1>
-        <p>Your personal reading library</p>
+        <div>
+          <h1>Welcome back, {userName || 'there'}!</h1>
+          <p>Your personal reading library</p>
+        </div>
       </div>
 
       {/* Quick Stats */}
