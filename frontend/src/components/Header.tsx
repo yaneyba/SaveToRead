@@ -4,7 +4,7 @@
  * Reusable header component for authenticated pages
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Logo } from '@/components/Logo';
 import { InfoModal } from '@/components/InfoModal';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,6 +14,31 @@ export function Header() {
   const { signOut, user } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [modalInfo, setModalInfo] = useState<{ title: string; message: string } | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showUserMenu) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showUserMenu]);
 
   const handleSignOut = async () => {
     try {
@@ -95,11 +120,12 @@ export function Header() {
             </svg>
           </button>
 
-          <div className="user-menu-container">
+          <div className="user-menu-container" ref={menuRef}>
             <button
               className="user-menu-button"
               onClick={() => setShowUserMenu(!showUserMenu)}
               aria-label="User menu"
+              aria-expanded={showUserMenu}
             >
               <div className="user-avatar">
                 {user?.displayName?.charAt(0).toUpperCase() || 'U'}
