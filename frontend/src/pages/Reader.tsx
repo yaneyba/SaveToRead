@@ -216,7 +216,9 @@ export function Reader() {
 
       <article className="reader-content">
         <header className="article-header">
-          <div className="article-meta">
+          <h1>{article.title}</h1>
+          
+          <div className="article-meta-stack">
             {article.publishedDate && (
               <time className="article-date">
                 {new Date(article.publishedDate).toLocaleDateString('en-US', {
@@ -226,6 +228,11 @@ export function Reader() {
                 })}
               </time>
             )}
+            {article.author && (
+              <p className="article-author">
+                <span className="author-prefix">By</span> {article.author}
+              </p>
+            )}
             {(article.wordCount || article.readingTimeMinutes) && (
               <div className="article-stats">
                 {article.wordCount && <span>{article.wordCount.toLocaleString()} words</span>}
@@ -234,14 +241,6 @@ export function Reader() {
               </div>
             )}
           </div>
-
-          <h1>{article.title}</h1>
-          
-          {article.author && (
-            <p className="article-author">
-              <span className="author-prefix">By</span> {article.author}
-            </p>
-          )}
         </header>
 
         {article.imageUrl && (
