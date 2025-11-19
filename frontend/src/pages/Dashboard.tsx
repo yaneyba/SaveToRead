@@ -4,10 +4,11 @@
  * Main dashboard view for authenticated users
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useArticles } from '@/hooks/useArticles';
 import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
+import { Toast } from '@/components/Toast';
 import type { Article } from '@savetoread/shared';
 import { AddArticleForm } from '@/components/dashboard/AddArticleForm';
 import { DashboardControls } from '@/components/dashboard/DashboardControls';
@@ -19,6 +20,20 @@ export function Dashboard() {
   const { articles, loading, error, createArticle, updateArticle, deleteArticle } = useArticles();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'favorites' | 'unread'>('all');
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  // Listen for articles saved from extension
+  useEffect(() => {
+    const handleArticleSaved = () => {
+      setToast({ message: 'Article saved successfully!', type: 'success' });
+    };
+
+    window.addEventListener('savetoread:articleSaved', handleArticleSaved);
+
+    return () => {
+      window.removeEventListener('savetoread:articleSaved', handleArticleSaved);
+    };
+  }, []);
 
   const handleCreateArticle = async (url: string) => {
     await createArticle(url);
@@ -120,6 +135,14 @@ export function Dashboard() {
         />
       </div>
 
+      {/* Toast notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

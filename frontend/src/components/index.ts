@@ -9,3 +9,4 @@ export { SignInModal } from './SignInModal';
 export { InfoModal } from './InfoModal';
 export { Header } from './Header';
 export { Footer } from './Footer';
+export { Toast } from './Toast';

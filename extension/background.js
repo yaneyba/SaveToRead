@@ -206,6 +206,22 @@ async function saveArticle(url, title, autoSnapshot = false, highlight = null) {
         [`notification_${notificationId}`]: result.data.id
       });
 
+      // Notify any open SaveToRead tabs to refresh
+      try {
+        chrome.tabs.query({}, (tabs) => {
+          tabs.forEach((tab) => {
+            if (tab.url && (tab.url.includes('savetoread.com') || tab.url.includes('savetoread.pages.dev'))) {
+              chrome.tabs.sendMessage(tab.id, {
+                action: 'articleSaved',
+                article: result.data
+              }).catch(() => {}); // Ignore if content script not loaded
+            }
+          });
+        });
+      } catch (error) {
+        console.log('Could not notify tabs:', error);
+      }
+
       // Auto-clear notification after 5 seconds
       setTimeout(() => {
         chrome.notifications.clear(notificationId);

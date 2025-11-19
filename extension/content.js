@@ -55,6 +55,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ text: null });
     }
   }
+  
+  // Handle article saved notification
+  if (request.action === 'articleSaved') {
+    // Dispatch custom event that React can listen to
+    window.dispatchEvent(new CustomEvent('savetoread:articleSaved', {
+      detail: request.article
+    }));
+    sendResponse({ received: true });
+  }
+  
   return true;
 });
 

@@ -38,6 +38,18 @@ export function useArticles(params?: ListArticlesParams) {
 
   useEffect(() => {
     fetchArticles();
+    
+    // Listen for article saved from extension
+    const handleArticleSaved = () => {
+      console.log('[SaveToRead] Article saved from extension, refreshing...');
+      fetchArticles();
+    };
+    
+    window.addEventListener('savetoread:articleSaved', handleArticleSaved as EventListener);
+    
+    return () => {
+      window.removeEventListener('savetoread:articleSaved', handleArticleSaved as EventListener);
+    };
   }, [fetchArticles]);
 
   const createArticle = useCallback(async (url: string, tags?: string[]) => {
