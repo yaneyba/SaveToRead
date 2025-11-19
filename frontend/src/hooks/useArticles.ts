@@ -23,21 +23,26 @@ export function useArticles(params?: ListArticlesParams) {
     setLoading(true);
     setError(null);
 
-    const response = await dataProvider.listArticles(paramsRef.current);
+    try {
+      const response = await dataProvider.listArticles(paramsRef.current);
 
-    if (response.success && response.data) {
-      setArticles(response.data.items);
-      setPagination({
-        total: response.data.total,
-        page: response.data.page,
-        pageSize: response.data.pageSize,
-        hasMore: response.data.hasMore
-      });
-    } else {
-      setError(response.error?.message || 'Failed to fetch articles');
+      if (response.success && response.data) {
+        setArticles(response.data.items);
+        setPagination({
+          total: response.data.total,
+          page: response.data.page,
+          pageSize: response.data.pageSize,
+          hasMore: response.data.hasMore
+        });
+      } else {
+        setError(response.error?.message || 'Failed to fetch articles');
+      }
+    } catch (err) {
+      console.error('[useArticles] Failed to fetch articles', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch articles');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }, [dataProvider]);
 
   useEffect(() => {
@@ -62,12 +67,15 @@ export function useArticles(params?: ListArticlesParams) {
     const response = await dataProvider.createArticle({ url, tags });
 
     if (response.success && response.data) {
-      setArticles(prev => [response.data!, ...prev]);
-      return response.data;
+      const created = response.data;
+      setArticles(prev => [created, ...prev]);
+      setPagination(prev => prev ? { ...prev, total: prev.total + 1 } : prev);
+      await fetchArticles(); // Ensure pagination + ordering stay in sync
+      return created;
     } else {
       throw new Error(response.error?.message || 'Failed to create article');
     }
-  }, [dataProvider]);
+  }, [dataProvider, fetchArticles]);
 
   const updateArticle = useCallback(async (id: string, updates: Partial<Article>) => {
     const response = await dataProvider.updateArticle(id, updates);
@@ -87,10 +95,12 @@ export function useArticles(params?: ListArticlesParams) {
 
     if (response.success) {
       setArticles(prev => prev.filter(article => article.id !== id));
+      setPagination(prev => prev ? { ...prev, total: Math.max(prev.total - 1, 0) } : prev);
+      await fetchArticles(); // Resync if pagination/page should shift
     } else {
       throw new Error(response.error?.message || 'Failed to delete article');
     }
-  }, [dataProvider]);
+  }, [dataProvider, fetchArticles]);
 
   return {
     articles,

@@ -18,17 +18,22 @@ export function Toast({ message, type = 'success', duration = 3000, onClose }: T
 
   useEffect(() => {
     console.log('[Toast] Showing toast:', message, type);
-    // Trigger animation
-    setTimeout(() => setIsVisible(true), 10);
+    const showTimer = setTimeout(() => setIsVisible(true), 10);
 
-    // Auto-close after duration
-    const timer = setTimeout(() => {
+    let closeTimer: ReturnType<typeof setTimeout> | undefined;
+    const hideTimer = setTimeout(() => {
       setIsVisible(false);
-      setTimeout(onClose, 300); // Wait for fade-out animation
+      closeTimer = setTimeout(onClose, 300); // Wait for fade-out animation
     }, duration);
 
-    return () => clearTimeout(timer);
-  }, [duration, onClose]);
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+      }
+    };
+  }, [duration, onClose, message, type]);
 
   return (
     <div className={`toast toast-${type} ${isVisible ? 'toast-visible' : ''}`}>

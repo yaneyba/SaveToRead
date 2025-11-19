@@ -21,7 +21,7 @@ export function Dashboard() {
   const { user } = useAuth();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(SITE_CONFIG.pagination.defaultPageSize);
-  const { articles, loading, error, pagination, createArticle, updateArticle, deleteArticle } = useArticles({ page, pageSize });
+  const { articles, loading, error, pagination, createArticle, updateArticle, deleteArticle, refresh } = useArticles({ page, pageSize });
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'favorites' | 'unread'>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -43,7 +43,15 @@ export function Dashboard() {
   }, []);
 
   const handleCreateArticle = async (url: string) => {
-    await createArticle(url);
+    try {
+      await createArticle(url);
+      setToast({ message: 'Article saved successfully!', type: 'success' });
+    } catch (err) {
+      console.error('Failed to create article:', err);
+      setToast({ message: 'Failed to save article. Please try again.', type: 'error' });
+      // Refresh to try to recover from any partial state
+      refresh();
+    }
   };
 
   const handleToggleFavorite = async (article: Article) => {
