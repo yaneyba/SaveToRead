@@ -4,6 +4,7 @@
  * Handles pagination controls for article lists
  */
 
+import { useEffect, useRef } from 'react';
 import { SITE_CONFIG } from '@/config/site';
 
 interface PaginationProps {
@@ -23,6 +24,49 @@ export function Pagination({
   onPageChange,
   onPageSizeChange
 }: PaginationProps) {
+  const selectRef = useRef<HTMLSelectElement>(null);
+
+  useEffect(() => {
+    const select = selectRef.current;
+    if (!select) return;
+
+    const handleFocus = () => {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${window.scrollY}px`;
+    };
+
+    const handleBlur = () => {
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    };
+
+    const handleClick = (e: MouseEvent) => {
+      if (select.contains(e.target as Node)) return;
+      select.blur();
+    };
+
+    select.addEventListener('focus', handleFocus);
+    select.addEventListener('blur', handleBlur);
+    select.addEventListener('change', handleBlur);
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      select.removeEventListener('focus', handleFocus);
+      select.removeEventListener('blur', handleBlur);
+      select.removeEventListener('change', handleBlur);
+      document.removeEventListener('click', handleClick);
+      // Cleanup in case component unmounts while select is focused
+      handleBlur();
+    };
+  }, []);
   if (totalPages <= 1 && !onPageSizeChange) {
     return null;
   }
@@ -74,6 +118,7 @@ export function Pagination({
           <div className="pagination-page-size">
             <label htmlFor="pageSize">Show:</label>
             <select
+              ref={selectRef}
               id="pageSize"
               value={pageSize}
               onChange={(e) => {

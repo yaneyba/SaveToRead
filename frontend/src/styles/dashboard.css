@@ -674,16 +674,20 @@
   color: #374151;
   cursor: pointer;
   transition: all 0.2s;
-}
-
-.pagination-page-size select:hover {
-  border-color: #d1d5db;
+  touch-action: manipulation;
 }
 
 .pagination-page-size select:focus {
   outline: none;
   border-color: #FF6F26;
   box-shadow: 0 0 0 3px rgba(255, 111, 38, 0.1);
+}
+
+/* Prevent body scroll when dropdown is open */
+.pagination-page-size select:focus,
+.pagination-page-size select:active {
+  position: relative;
+  z-index: 1000;
 }
 
 .pagination-controls {
