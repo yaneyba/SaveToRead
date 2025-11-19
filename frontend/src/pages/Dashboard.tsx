@@ -13,11 +13,14 @@ import type { Article } from '@savetoread/shared';
 import { AddArticleForm } from '@/components/dashboard/AddArticleForm';
 import { DashboardControls } from '@/components/dashboard/DashboardControls';
 import { ArticlesGrid } from '@/components/dashboard/ArticlesGrid';
+import { Pagination } from '@/components/dashboard/Pagination';
 import '@/styles/dashboard.css';
 
 export function Dashboard() {
   const { user } = useAuth();
-  const { articles, loading, error, createArticle, updateArticle, deleteArticle } = useArticles();
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(12);
+  const { articles, loading, error, pagination, createArticle, updateArticle, deleteArticle } = useArticles({ page, pageSize });
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'favorites' | 'unread'>('all');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
@@ -25,10 +28,12 @@ export function Dashboard() {
   // Listen for articles saved from extension
   useEffect(() => {
     const handleArticleSaved = () => {
+      console.log('[Dashboard] Article saved event received, showing toast');
       setToast({ message: 'Article saved successfully!', type: 'success' });
     };
 
     window.addEventListener('savetoread:articleSaved', handleArticleSaved);
+    console.log('[Dashboard] Listening for savetoread:articleSaved events');
 
     return () => {
       window.removeEventListener('savetoread:articleSaved', handleArticleSaved);
@@ -133,6 +138,19 @@ export function Dashboard() {
           onToggleFavorite={handleToggleFavorite}
           onDelete={handleDelete}
         />
+
+        {pagination && (
+          <Pagination
+            currentPage={pagination.page}
+            totalPages={Math.ceil(pagination.total / pagination.pageSize)}
+            totalItems={pagination.total}
+            pageSize={pagination.pageSize}
+            onPageChange={(newPage) => {
+              setPage(newPage);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
       </div>
 
       {/* Toast notification */}

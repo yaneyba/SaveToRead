@@ -17,6 +17,7 @@ export function Toast({ message, type = 'success', duration = 3000, onClose }: T
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    console.log('[Toast] Showing toast:', message, type);
     // Trigger animation
     setTimeout(() => setIsVisible(true), 10);
 
