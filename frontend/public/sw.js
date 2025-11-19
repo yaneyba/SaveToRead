@@ -238,3 +238,12 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+// Notify clients when a new service worker takes control
+self.addEventListener('controllerchange', () => {
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => {
+      client.postMessage({ type: 'RELOAD' });
+    });
+  });
+});

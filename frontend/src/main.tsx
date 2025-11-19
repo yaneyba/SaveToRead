@@ -29,9 +29,8 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // New service worker available, reload the page
-                console.log('New service worker available, reloading...');
-                window.location.reload();
+                // New service worker available, tell it to take control
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
               }
             });
           }
@@ -40,5 +39,19 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
       .catch(error => {
         console.error('SW registration failed:', error);
       });
+    
+    // Listen for messages from service worker
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'RELOAD') {
+        console.log('Service worker updated, reloading page...');
+        window.location.reload();
+      }
+    });
+    
+    // Handle controller change (when new SW takes over)
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      console.log('Service worker controller changed, reloading...');
+      window.location.reload();
+    });
   });
 }
