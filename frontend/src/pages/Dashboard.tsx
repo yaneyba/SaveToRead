@@ -7,7 +7,6 @@
 import { useState } from 'react';
 import { useArticles } from '@/hooks/useArticles';
 import { useAuth } from '@/hooks/useAuth';
-import { InfoModal } from '@/components/InfoModal';
 import { Header } from '@/components/Header';
 import type { Article } from '@savetoread/shared';
 import { AddArticleForm } from '@/components/dashboard/AddArticleForm';
@@ -20,14 +19,6 @@ export function Dashboard() {
   const { articles, loading, error, createArticle, updateArticle, deleteArticle } = useArticles();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'favorites' | 'unread'>('all');
-  const [modalInfo, setModalInfo] = useState<{ title: string; message: string } | null>(null);
-
-  const showComingSoon = (feature: string) => {
-    setModalInfo({
-      title: `${feature} Coming Soon!`,
-      message: `We're working hard to bring you the ${feature.toLowerCase()} feature. Stay tuned for updates!`
-    });
-  };
 
   const handleCreateArticle = async (url: string) => {
     await createArticle(url);
@@ -129,13 +120,6 @@ export function Dashboard() {
         />
       </div>
 
-      {modalInfo && (
-        <InfoModal
-          title={modalInfo.title}
-          message={modalInfo.message}
-          onClose={() => setModalInfo(null)}
-        />
-      )}
     </div>
   );
 }

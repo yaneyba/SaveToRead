@@ -12,6 +12,7 @@ interface AuthContextValue {
   user: User | null;
   loading: boolean;
   error: string | null;
+  token: string | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, displayName: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -88,6 +89,7 @@ export function useAuthProvider(): AuthContextValue {
     user,
     loading,
     error,
+    token: localStorage.getItem('auth_token'),
     signIn,
     signUp,
     signOut,

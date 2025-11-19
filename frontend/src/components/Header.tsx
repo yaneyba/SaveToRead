@@ -10,13 +10,8 @@ import { InfoModal } from '@/components/InfoModal';
 import { useAuth } from '@/hooks/useAuth';
 import '@/styles/modal.css';
 
-interface HeaderProps {
-  onMenuClick?: () => void;
-  showMenu?: boolean;
-}
-
-export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
-  const { user, signOut } = useAuth();
+export function Header() {
+  const { signOut } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [modalInfo, setModalInfo] = useState<{ title: string; message: string } | null>(null);
 

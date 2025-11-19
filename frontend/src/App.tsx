@@ -4,8 +4,10 @@
  * Main application component
  */
 
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/components/AuthProvider';
 import { Dashboard } from '@/pages/Dashboard';
+import { Reader } from '@/pages/Reader';
 import { Footer } from '@/components/Footer';
 import { LandingPage } from '@/pages/LandingPage';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,14 +25,22 @@ function AppContent() {
   }
 
   if (!user) {
-    return <LandingPage />;
+    return (
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    );
   }
 
   return (
     <div className="app">
-      <main className="app-main">
-        <Dashboard />
-      </main>
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/read/:id" element={<Reader />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
 
       <Footer variant="minimal" />
     </div>
@@ -39,8 +49,10 @@ function AppContent() {
 
 export function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }

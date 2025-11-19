@@ -124,7 +124,7 @@ export function ArticlesGrid({
             </div>
           )}
 
-          <a href={article.url} target="_blank" rel="noopener noreferrer" className="read-button">
+          <a href={`/read/${article.id}`} className="read-button">
             {article.readProgress > 0 ? 'Continue Reading' : 'Start Reading'}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="5" y1="12" x2="19" y2="12" />

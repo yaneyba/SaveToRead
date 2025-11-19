@@ -108,7 +108,7 @@ async function extractWithJinaAI(
     }
 
     // Jina AI returns JSON: { code: 200, status: 20000, data: { title, content, ... } }
-    const jsonResponse = await response.json();
+    const jsonResponse: any = await response.json();
 
     // Check if response is valid
     if (!jsonResponse.data) {
