@@ -363,10 +363,10 @@ function decodeHtmlEntities(text: string): string {
     '&mdash;': '—',
     '&ndash;': '–',
     '&hellip;': '…',
-    '&rsquo;': ''',
-    '&lsquo;': ''',
-    '&rdquo;': '"',
-    '&ldquo;': '"'
+    '&rsquo;': '\u2019',
+    '&lsquo;': '\u2018',
+    '&rdquo;': '\u201D',
+    '&ldquo;': '\u201C'
   };
 
   let decoded = text;
