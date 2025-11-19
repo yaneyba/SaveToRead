@@ -107,96 +107,51 @@ async function extractWithJinaAI(
       return null;
     }
 
-    const text = await response.text();
+    // Jina AI returns JSON: { code: 200, status: 20000, data: { title, content, ... } }
+    const jsonResponse = await response.json();
 
-    // Parse the markdown response
-    const extracted = parseJinaResponse(text, url);
+    // Check if response is valid
+    if (!jsonResponse.data) {
+      console.warn('Jina AI response missing data field');
+      return null;
+    }
+
+    const jinaData = jsonResponse.data;
+
+    // Calculate word count and reading time
+    const content = jinaData.content || '';
+    const wordCount = countWords(content);
+    const readingTimeMinutes = Math.ceil(wordCount / 225);
+
+    // Generate excerpt from description or first paragraph
+    let excerpt = jinaData.description || '';
+    if (!excerpt && content) {
+      const firstParagraph = content.split('\n\n')[0];
+      if (firstParagraph && firstParagraph.length > 20) {
+        excerpt = firstParagraph.substring(0, 200).trim();
+        if (firstParagraph.length > 200) {
+          excerpt += '...';
+        }
+      }
+    }
+
+    const extracted: ExtractedContent = {
+      title: jinaData.title || new URL(url).hostname,
+      author: jinaData.author || jinaData.byline,
+      content,
+      excerpt,
+      publishedDate: jinaData.publishedTime || jinaData.publishedDate,
+      siteName: jinaData.siteName || new URL(url).hostname,
+      imageUrl: jinaData.image,
+      wordCount,
+      readingTimeMinutes
+    };
 
     return extracted;
   } catch (error) {
     console.warn('Jina AI extraction failed:', error);
     return null;
   }
-}
-
-/**
- * Parse Jina AI markdown response and extract metadata
- */
-function parseJinaResponse(markdown: string, originalUrl: string): ExtractedContent {
-  // Jina AI returns markdown with metadata in the format:
-  // Title: ...
-  // URL Source: ...
-  // Markdown Content: ...
-
-  const lines = markdown.split('\n');
-  let title = '';
-  let author: string | undefined;
-  let content = '';
-  let excerpt: string | undefined;
-  let publishedDate: string | undefined;
-  let siteName: string | undefined;
-  let imageUrl: string | undefined;
-
-  let inContent = false;
-  const contentLines: string[] = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    // Extract title (usually the first H1 heading)
-    if (!title && line.startsWith('# ')) {
-      title = line.substring(2).trim();
-      continue;
-    }
-
-    // Look for metadata patterns (Jina sometimes includes these)
-    if (line.toLowerCase().includes('by ') && !author) {
-      const byMatch = line.match(/by\s+(.+?)(?:\s+on|\s+\||$)/i);
-      if (byMatch) {
-        author = byMatch[1].trim();
-      }
-    }
-
-    // Collect content
-    if (line.trim()) {
-      contentLines.push(line);
-      inContent = true;
-    } else if (inContent) {
-      contentLines.push('');
-    }
-  }
-
-  content = contentLines.join('\n').trim();
-
-  // Generate excerpt from first paragraph
-  const firstParagraph = content.split('\n\n')[0];
-  if (firstParagraph && firstParagraph.length > 20) {
-    excerpt = firstParagraph.substring(0, 200).trim();
-    if (firstParagraph.length > 200) {
-      excerpt += '...';
-    }
-  }
-
-  // If no title found, use domain name
-  if (!title) {
-    title = new URL(originalUrl).hostname;
-  }
-
-  // Calculate word count and reading time
-  const wordCount = countWords(content);
-  const readingTimeMinutes = Math.ceil(wordCount / 225); // 225 words per minute
-
-  return {
-    title,
-    author,
-    content,
-    excerpt,
-    publishedDate,
-    siteName,
-    imageUrl,
-    wordCount,
-    readingTimeMinutes
-  };
 }
 
 /**
