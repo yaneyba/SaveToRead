@@ -483,7 +483,32 @@ app.post('/:id/snapshot', async (c) => {
 
     try {
       if (format === 'pdf' || format === 'html') {
-        browser = await puppeteer.launch(c.env.BROWSER);
+        try {
+          browser = await puppeteer.launch(c.env.BROWSER);
+        } catch (browserError) {
+          // Handle rate limit or browser launch errors
+          const errorMessage = browserError instanceof Error ? browserError.message : 'Unknown error';
+          
+          if (errorMessage.includes('429') || errorMessage.includes('Rate limit')) {
+            return c.json({
+              success: false,
+              error: { 
+                code: 'RATE_LIMIT_EXCEEDED', 
+                message: 'Snapshot generation temporarily unavailable. Please try again in a few minutes.' 
+              }
+            }, 429);
+          }
+          
+          // For other browser errors, fall back to non-browser methods
+          console.error('Browser launch failed:', errorMessage);
+          return c.json({
+            success: false,
+            error: { 
+              code: 'BROWSER_ERROR', 
+              message: 'Unable to generate snapshot at this time. Please try again later.' 
+            }
+          }, 503);
+        }
       }
 
       // Generate snapshot based on format

@@ -19,6 +19,8 @@ export function Reader() {
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [snapshotLoading, setSnapshotLoading] = useState(false);
+  const [snapshotError, setSnapshotError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id || !token) return;
@@ -47,9 +49,13 @@ export function Reader() {
 
     // Only PDF and HTML are supported by the snapshot API currently
     if (format === 'epub' || format === 'markdown') {
-      alert(`${format.toUpperCase()} export is coming soon!`);
+      setSnapshotError(`${format.toUpperCase()} export is coming soon!`);
+      setTimeout(() => setSnapshotError(null), 4000);
       return;
     }
+
+    setSnapshotLoading(true);
+    setSnapshotError(null);
 
     try {
       const result = await dataProvider.generateSnapshot(id, format);
@@ -59,13 +65,30 @@ export function Reader() {
         if (downloadUrl) {
           window.open(downloadUrl, '_blank');
         } else {
-          alert('Snapshot generated but no download URL returned. Check your storage settings.');
+          setSnapshotError('Snapshot generated but no download URL returned. Check your storage settings.');
         }
       } else {
-        throw new Error(result.error?.message || 'Failed to generate snapshot');
+        const errorMessage = result.error?.message || 'Failed to generate snapshot';
+        const errorCode = result.error?.code;
+        
+        if (errorCode === 'RATE_LIMIT_EXCEEDED') {
+          setSnapshotError('⏱️ Snapshot service is temporarily busy. Please try again in a few minutes.');
+        } else if (errorCode === 'BROWSER_ERROR' || errorMessage.includes('timeout')) {
+          setSnapshotError('🔄 Snapshot generation timed out. The page may be too complex. Try again or use the Original link.');
+        } else {
+          setSnapshotError(errorMessage);
+        }
       }
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to download');
+      const errorMsg = err instanceof Error ? err.message : 'Failed to download';
+      setSnapshotError(errorMsg.includes('timeout') 
+        ? '🔄 Request timed out. The page may be too large or slow to load.'
+        : errorMsg
+      );
+    } finally {
+      setSnapshotLoading(false);
+      // Auto-dismiss error after 6 seconds
+      setTimeout(() => setSnapshotError(null), 6000);
     }
   };
 
@@ -92,6 +115,32 @@ export function Reader() {
 
   return (
     <div className="reader">
+      {/* Snapshot notification banner */}
+      {(snapshotLoading || snapshotError) && (
+        <div className={`reader-notification ${snapshotError ? 'error' : 'loading'}`}>
+          <div className="notification-content">
+            {snapshotLoading ? (
+              <>
+                <div className="notification-spinner"></div>
+                <span>Generating snapshot...</span>
+              </>
+            ) : (
+              <>
+                <span className="notification-icon">⚠️</span>
+                <span>{snapshotError}</span>
+                <button 
+                  className="notification-close" 
+                  onClick={() => setSnapshotError(null)}
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       <header className="reader-header">
         <button onClick={() => navigate('/dashboard')} className="back-button">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -102,7 +151,12 @@ export function Reader() {
         </button>
 
         <div className="reader-actions">
-          <button onClick={() => handleDownload('pdf')} className="action-btn" title="Download as PDF">
+          <button 
+            onClick={() => handleDownload('pdf')} 
+            className="action-btn" 
+            title="Download as PDF"
+            disabled={snapshotLoading}
+          >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
@@ -110,7 +164,12 @@ export function Reader() {
             </svg>
             PDF
           </button>
-          <button onClick={() => handleDownload('html')} className="action-btn" title="Download as HTML">
+          <button 
+            onClick={() => handleDownload('html')} 
+            className="action-btn" 
+            title="Download as HTML"
+            disabled={snapshotLoading}
+          >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
@@ -118,7 +177,12 @@ export function Reader() {
             </svg>
             HTML
           </button>
-          <button onClick={() => handleDownload('epub')} className="action-btn" title="Download as EPUB">
+          <button 
+            onClick={() => handleDownload('epub')} 
+            className="action-btn" 
+            title="Download as EPUB"
+            disabled={snapshotLoading}
+          >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
@@ -126,7 +190,12 @@ export function Reader() {
             </svg>
             EPUB
           </button>
-          <button onClick={() => handleDownload('markdown')} className="action-btn" title="Download as Markdown">
+          <button 
+            onClick={() => handleDownload('markdown')} 
+            className="action-btn" 
+            title="Download as Markdown"
+            disabled={snapshotLoading}
+          >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
