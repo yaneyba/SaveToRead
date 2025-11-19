@@ -65,7 +65,7 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
           )}
 
           <a href="/" className="header-logo">
-            <LogoWordmark size={32} textColor="#FF6F26" iconColor="#FF6F26" />
+            <LogoWordmark textColor="#FF6F26" iconColor="#FF6F26" />
           </a>
         </div>
 

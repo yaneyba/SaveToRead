@@ -33,7 +33,7 @@ export function LandingPage() {
       {/* Sticky Navigation */}
       <nav className="hero-nav">
         <div className="nav-content">
-          <LogoWordmark size={32} className="logo" textColor="white" iconColor="white" />
+          <LogoWordmark className="logo" textColor="white" iconColor="white" />
           <div className="nav-actions">
             <button onClick={() => setShowSignIn(true)} className="btn-text">
               Sign In

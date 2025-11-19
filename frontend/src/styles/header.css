@@ -276,7 +276,7 @@
 /* Mobile Responsiveness */
 @media (max-width: 640px) {
   .header-content {
-    padding: 0 1rem;
+    padding: 0 0.75rem;
   }
 
   .search-button {
