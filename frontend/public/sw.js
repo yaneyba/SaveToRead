@@ -69,36 +69,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // API requests - network first, cache fallback
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Clone response before caching
-          const responseToCache = response.clone();
-
-          caches.open(RUNTIME_CACHE).then((cache) => {
-            cache.put(request, responseToCache);
-          });
-
-          return response;
-        })
-        .catch((error) => {
-          console.error('[SW] API fetch failed:', error);
-          // Return cached version if network fails
-          return caches.match(request).then((cached) => {
-            if (cached) {
-              return cached;
-            }
-            // Return error response if no cache available
-            return new Response(JSON.stringify({ error: 'Network unavailable' }), {
-              status: 503,
-              statusText: 'Service Unavailable',
-              headers: { 'Content-Type': 'application/json' }
-            });
-          });
-        })
-    );
+  // API requests - skip service worker (they go to api.savetoread.com)
+  // Only intercept same-origin requests
+  if (url.origin !== self.location.origin) {
     return;
   }
 

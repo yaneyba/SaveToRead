@@ -43,8 +43,7 @@ export class DataProviderFactory {
     switch (type) {
       case DataProviderType.API:
         // Use VITE_API_URL from env, or fallback to production API in production mode
-        const baseUrl = import.meta.env.VITE_API_URL ||
-          (import.meta.env.PROD ? 'https://api.savetoread.com' : '');
+        const baseUrl = import.meta.env.VITE_API_URL || 'https://api.savetoread.com';
 
         return new ApiDataProvider({
           baseUrl,
