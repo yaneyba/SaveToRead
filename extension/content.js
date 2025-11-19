@@ -5,13 +5,16 @@
 
 // Sync auth token from website to extension (only on savetoread.com)
 if (window.location.hostname === 'savetoread.com' || window.location.hostname.endsWith('.savetoread.pages.dev')) {
+  let lastSyncedToken = null;
+
   // Check localStorage for auth token (frontend uses 'auth_token')
   const checkAndSyncToken = () => {
     const token = localStorage.getItem('auth_token');
-    if (token) {
-      console.log('[SaveToRead Extension] Found auth token, syncing to extension');
+    if (token && token !== lastSyncedToken) {
+      console.log('[SaveToRead Extension] Found new auth token, syncing to extension');
       chrome.storage.sync.set({ authToken: token }, () => {
         console.log('[SaveToRead Extension] Auth token synced successfully');
+        lastSyncedToken = token;
       });
     }
   };

@@ -131,8 +131,12 @@ export class MockDataProvider implements IDataProvider {
     return this.mockResponse(undefined);
   }
 
-  async generateSnapshot(articleId: string, format: 'pdf' | 'html'): Promise<ApiResponse<{ url: string }>> {
-    return this.mockResponse({ url: `https://storage.example.com/snapshots/${articleId}.${format}` });
+  async generateSnapshot(articleId: string, format: 'pdf' | 'html'): Promise<ApiResponse<{ url?: string; cloudUrl?: string; filename?: string }>> {
+    return this.mockResponse({
+      url: `https://storage.example.com/snapshots/${articleId}.${format}`,
+      cloudUrl: `https://storage.example.com/snapshots/${articleId}.${format}`,
+      filename: `article-${articleId}.${format}`
+    });
   }
 
   // Annotations

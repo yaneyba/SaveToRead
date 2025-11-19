@@ -238,8 +238,8 @@ export class ApiDataProvider implements IDataProvider {
     return this.delete<void>(`/api/articles/${id}`);
   }
 
-  async generateSnapshot(articleId: string, format: 'pdf' | 'html'): Promise<ApiResponse<{ url: string }>> {
-    return this.post<{ url: string }>(`/api/articles/${articleId}/snapshot`, { format });
+  async generateSnapshot(articleId: string, format: 'pdf' | 'html'): Promise<ApiResponse<{ url?: string; cloudUrl?: string; filename?: string }>> {
+    return this.post<{ url?: string; cloudUrl?: string; filename?: string }>(`/api/articles/${articleId}/snapshot`, { format });
   }
 
   // ============================================================================

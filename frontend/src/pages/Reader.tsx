@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useDataProvider } from '@/providers/DataProviderFactory';
 import type { Article } from '@savetoread/shared';
 import '@/styles/reader.css';
 
@@ -14,6 +15,7 @@ export function Reader() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { token } = useAuth();
+  const dataProvider = useDataProvider();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,18 +25,9 @@ export function Reader() {
 
     const fetchArticle = async () => {
       try {
-        const response = await fetch(`http://localhost:8787/api/articles/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const result = await dataProvider.getArticle(id);
 
-        if (!response.ok) {
-          throw new Error('Failed to load article');
-        }
-
-        const result = await response.json();
-        if (result.success) {
+        if (result.success && result.data) {
           setArticle(result.data);
         } else {
           throw new Error(result.error?.message || 'Failed to load article');
@@ -47,43 +40,30 @@ export function Reader() {
     };
 
     fetchArticle();
-  }, [id, token]);
+  }, [id, token, dataProvider]);
 
-  const handleDownload = async (format: string) => {
+  const handleDownload = async (format: 'pdf' | 'html' | 'epub' | 'markdown') => {
     if (!id || !token) return;
 
+    // Only PDF and HTML are supported by the snapshot API currently
+    if (format === 'epub' || format === 'markdown') {
+      alert(`${format.toUpperCase()} export is coming soon!`);
+      return;
+    }
+
     try {
-      const response = await fetch(
-        `http://localhost:8787/api/articles/${id}/snapshot?format=${format}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+      const result = await dataProvider.generateSnapshot(id, format);
+
+      if (result.success && result.data) {
+        const downloadUrl = result.data.cloudUrl || result.data.url;
+        if (downloadUrl) {
+          window.open(downloadUrl, '_blank');
+        } else {
+          alert('Snapshot generated but no download URL returned. Check your storage settings.');
         }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to generate snapshot');
+      } else {
+        throw new Error(result.error?.message || 'Failed to generate snapshot');
       }
-
-      // Get filename from Content-Disposition header or create default
-      const contentDisposition = response.headers.get('Content-Disposition');
-      let filename = `article-${id}.${format}`;
-      if (contentDisposition) {
-        const match = contentDisposition.match(/filename="?(.+)"?/);
-        if (match) filename = match[1];
-      }
-
-      // Download the file
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to download');
     }

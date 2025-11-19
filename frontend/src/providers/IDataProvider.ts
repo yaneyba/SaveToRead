@@ -85,7 +85,7 @@ export interface IDataProvider {
   /**
    * Generate snapshot (PDF/HTML) of article
    */
-  generateSnapshot(articleId: string, format: 'pdf' | 'html'): Promise<ApiResponse<{ url: string }>>;
+  generateSnapshot(articleId: string, format: 'pdf' | 'html'): Promise<ApiResponse<{ url?: string; cloudUrl?: string; filename?: string }>>;
 
   // ============================================================================
   // Annotations & Highlights
