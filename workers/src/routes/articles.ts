@@ -26,6 +26,7 @@ import {
   areDuplicateUrls,
   analyzeContent
 } from '../services/content-analysis';
+import { extractArticleContent } from '../services/content-extraction';
 
 const app = new Hono<{ Bindings: Env; Variables: { userId?: string } }>();
 
@@ -246,27 +247,54 @@ app.post('/', async (c) => {
       }, 409); // 409 Conflict
     }
 
-    // In a real implementation, you would fetch and parse the article content here
-    // For now, we'll create a basic article
-    const articleId = crypto.randomUUID();
+    // Extract article content from URL
+    let extractedContent;
+    try {
+      extractedContent = await extractArticleContent(input.url, {
+        useJinaAI: true,
+        timeout: 15000 // Increased timeout for better reliability
+      });
 
-    // Placeholder content for demo - in production, fetch from URL
-    const placeholderContent = '';
-    const contentMetrics = analyzeContent(placeholderContent);
+      // Log extraction method for debugging
+      console.log(`Article extracted using ${extractedContent.extractionMethod} for ${input.url}`);
+
+      if (extractedContent.extractionError) {
+        console.warn(`Extraction error: ${extractedContent.extractionError}`);
+      }
+    } catch (error) {
+      console.error('Content extraction failed:', error);
+      // Use fallback data
+      extractedContent = {
+        title: new URL(input.url).hostname,
+        content: '',
+        excerpt: 'Failed to extract content',
+        wordCount: 0,
+        readingTimeMinutes: 0,
+        extractionMethod: 'fallback',
+        extractionError: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+
+    const articleId = crypto.randomUUID();
 
     const article: Article = {
       id: articleId,
       userId,
       url: input.url,
-      title: new URL(input.url).hostname, // Placeholder - would be fetched
+      title: extractedContent.title,
+      author: extractedContent.author,
+      content: extractedContent.content,
+      excerpt: extractedContent.excerpt,
+      imageUrl: extractedContent.imageUrl,
+      publishedDate: extractedContent.publishedDate,
       tags: input.tags || [],
       isFavorite: false,
       isArchived: false,
       readProgress: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      wordCount: contentMetrics.wordCount,
-      readingTimeMinutes: contentMetrics.readingTimeMinutes
+      wordCount: extractedContent.wordCount,
+      readingTimeMinutes: extractedContent.readingTimeMinutes
     };
 
     // Store article

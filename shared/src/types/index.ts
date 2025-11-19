@@ -42,6 +42,7 @@ export interface Article {
   excerpt?: string;
   content?: string;
   imageUrl?: string;
+  publishedDate?: string; // Original publication date from article
   tags: string[];
   isFavorite: boolean;
   isArchived: boolean;
