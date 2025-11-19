@@ -24,6 +24,7 @@ export function Dashboard() {
   const { articles, loading, error, pagination, createArticle, updateArticle, deleteArticle } = useArticles({ page, pageSize });
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'favorites' | 'unread'>('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   // Listen for articles saved from extension
@@ -129,6 +130,8 @@ export function Dashboard() {
           onFilterChange={setActiveFilter}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
 
         <ArticlesGrid
@@ -136,6 +139,7 @@ export function Dashboard() {
           loading={loading}
           error={error}
           totalArticles={articles.length}
+          viewMode={viewMode}
           onToggleFavorite={handleToggleFavorite}
           onDelete={handleDelete}
         />

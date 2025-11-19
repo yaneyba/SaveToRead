@@ -144,6 +144,43 @@
   flex-wrap: wrap;
 }
 
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.25rem;
+  background: #f3f4f6;
+  padding: 0.25rem;
+  border-radius: 8px;
+}
+
+.view-toggle button {
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-toggle button:hover {
+  color: #111827;
+}
+
+.view-toggle button.active {
+  background: white;
+  color: #FF6F26;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 .filter-tabs {
   display: flex;
   gap: 0.5rem;
@@ -207,6 +244,50 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
+}
+
+/* List View */
+.articles-grid.list-view {
+  grid-template-columns: 1fr;
+}
+
+.articles-grid.list-view .article-card-modern {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.articles-grid.list-view .article-card-header {
+  flex-direction: row;
+  align-items: flex-start;
+  order: 1;
+}
+
+.articles-grid.list-view .article-title {
+  margin-bottom: 0.25rem;
+}
+
+.articles-grid.list-view .article-excerpt {
+  margin: 0.5rem 0;
+}
+
+.articles-grid.list-view .article-meta {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  order: 2;
+}
+
+.articles-grid.list-view .reading-progress {
+  order: 0;
+  width: 120px;
+}
+
+.articles-grid.list-view .read-button {
+  order: 3;
+  width: auto;
+  white-space: nowrap;
 }
 
 .article-card-modern {
@@ -756,6 +837,43 @@
 
   .pagination-controls {
     justify-content: center;
+  }
+
+  /* Mobile: hide view toggle and force list view */
+  .view-toggle {
+    display: none;
+  }
+
+  .articles-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .articles-grid .article-card-modern {
+    padding: 1rem;
+  }
+
+  .search-container {
+    min-width: 100%;
+  }
+
+  .dashboard-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .controls-right {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-tabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filter-tabs button {
+    flex: 1;
+    text-align: center;
   }
 }
 

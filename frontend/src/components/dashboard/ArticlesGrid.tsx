@@ -11,6 +11,7 @@ interface ArticlesGridProps {
   loading: boolean;
   error: string | null;
   totalArticles: number;
+  viewMode: 'grid' | 'list';
   onToggleFavorite: (article: Article) => void;
   onDelete: (id: string) => void;
 }
@@ -20,6 +21,7 @@ export function ArticlesGrid({
   loading,
   error,
   totalArticles,
+  viewMode,
   onToggleFavorite,
   onDelete
 }: ArticlesGridProps) {
@@ -62,7 +64,7 @@ export function ArticlesGrid({
   }
 
   return (
-    <div className="articles-grid">
+    <div className={`articles-grid ${viewMode === 'list' ? 'list-view' : ''}`}>
       {articles.map((article) => (
         <article key={article.id} className="article-card-modern">
           <div className="article-card-header">
