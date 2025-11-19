@@ -170,7 +170,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
 }
 
@@ -192,12 +192,13 @@
 }
 
 .article-header h1 {
-  font-size: 2.5rem;
+  font-size: 2.75rem;
   font-weight: 800;
   color: #111827;
-  line-height: 1.2;
-  margin-bottom: 1rem;
-  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.025em;
+  max-width: 100%;
 }
 
 .article-author {
@@ -399,8 +400,9 @@
   }
 
   .article-header h1 {
-    font-size: 1.75rem;
-    letter-spacing: -0.01em;
+    font-size: 2rem;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
   }
 
   .article-author {
@@ -411,6 +413,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .article-body {
