@@ -331,11 +331,13 @@
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 0.25rem;
+  color: #ffffff;
 }
 
 .stat-label {
-  font-size: 0.875rem;
-  opacity: 0.8;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #ffffff;
 }
 
 /* Container */
