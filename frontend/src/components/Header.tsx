@@ -40,30 +40,8 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
   return (
     <header className="header">
       <div className="header-content">
-        {/* Left side - Logo and Menu */}
+        {/* Left side - Logo */}
         <div className="header-left">
-          {showMenu && (
-            <button
-              className="menu-button"
-              onClick={onMenuClick}
-              aria-label="Toggle menu"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            </button>
-          )}
-
           <a href="/" className="header-logo">
             <Logo />
           </a>
@@ -84,28 +62,6 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
 
         {/* Right side - Search and User Menu */}
         <div className="header-right">
-          {showMenu && (
-            <button
-              className="menu-button-mobile"
-              onClick={onMenuClick}
-              aria-label="Toggle menu"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            </button>
-          )}
-
           <button 
             className="search-button" 
             onClick={() => showComingSoon('Search')}
@@ -213,7 +169,43 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
                   <div className="user-menu-divider" />
 
                   <nav className="user-menu-nav">
-                    <div className="user-menu-section-label">Storage</div>
+                    <div className="user-menu-section-label">Navigation</div>
+                    <a href="/dashboard" className="user-menu-item">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
+                      </svg>
+                      Dashboard
+                    </a>
+                    <button onClick={() => showComingSoon('Library')} className="user-menu-item">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                      </svg>
+                      Library
+                    </button>
+                    <button onClick={() => showComingSoon('Favorites')} className="user-menu-item">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                      Favorites
+                    </button>
+                    <button onClick={() => showComingSoon('Archive')} className="user-menu-item">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="21 8 21 21 3 21 3 8" />
+                        <rect x="1" y="3" width="22" height="5" />
+                        <line x1="10" y1="12" x2="14" y2="12" />
+                      </svg>
+                      Archive
+                    </button>
+                  </nav>
+
+                  <div className="user-menu-divider" />
+
+                  <nav className="user-menu-nav">
+                    <div className="user-menu-section-label">Account</div>
                     <button
                       onClick={() => showComingSoon('Cloud Storage')}
                       className="user-menu-item"

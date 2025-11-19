@@ -20,7 +20,6 @@ export function Dashboard() {
   const { articles, loading, error, createArticle, updateArticle, deleteArticle } = useArticles();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'favorites' | 'unread'>('all');
-  const [showSidebar, setShowSidebar] = useState(false);
   const [modalInfo, setModalInfo] = useState<{ title: string; message: string } | null>(null);
 
   const showComingSoon = (feature: string) => {
@@ -28,7 +27,6 @@ export function Dashboard() {
       title: `${feature} Coming Soon!`,
       message: `We're working hard to bring you the ${feature.toLowerCase()} feature. Stay tuned for updates!`
     });
-    setShowSidebar(false);
   };
 
   const handleCreateArticle = async (url: string) => {
@@ -81,66 +79,7 @@ export function Dashboard() {
 
   return (
     <div className="dashboard">
-      {/* Sidebar Navigation */}
-      {showSidebar && (
-        <>
-          <div 
-            className="sidebar-overlay" 
-            onClick={() => setShowSidebar(false)}
-          />
-          <aside className="dashboard-sidebar">
-            <div className="sidebar-header">
-              <h2>Menu</h2>
-              <button 
-                className="sidebar-close"
-                onClick={() => setShowSidebar(false)}
-                aria-label="Close sidebar"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
-            <nav className="sidebar-nav">
-              <div className="sidebar-section">
-                <button className="sidebar-item active" onClick={() => setShowSidebar(false)}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="3" width="7" height="7" />
-                    <rect x="14" y="3" width="7" height="7" />
-                    <rect x="14" y="14" width="7" height="7" />
-                    <rect x="3" y="14" width="7" height="7" />
-                  </svg>
-                  Dashboard
-                </button>
-                <button className="sidebar-item" onClick={() => showComingSoon('Library')}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                  </svg>
-                  Library
-                </button>
-                <button className="sidebar-item" onClick={() => showComingSoon('Favorites')}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                  Favorites
-                </button>
-                <button className="sidebar-item" onClick={() => showComingSoon('Archive')}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="21 8 21 21 3 21 3 8" />
-                    <rect x="1" y="3" width="22" height="5" />
-                    <line x1="10" y1="12" x2="14" y2="12" />
-                  </svg>
-                  Archive
-                </button>
-              </div>
-            </nav>
-          </aside>
-        </>
-      )}
-
-      <Header onMenuClick={() => setShowSidebar(true)} showMenu />
+      <Header />
       
       <div className="dashboard-content">
         {/* Welcome Section */}
