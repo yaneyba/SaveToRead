@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 import { SignInModal } from '@/components/SignInModal';
-import { LogoWordmark } from '@/components/Logo';
+import { Logo } from '@/components/Logo';
 import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
 import { HeroSection } from '@/components/landing/HeroSection';
@@ -33,7 +33,7 @@ export function LandingPage() {
       {/* Sticky Navigation */}
       <nav className="hero-nav">
         <div className="nav-content">
-          <LogoWordmark className="logo" textColor="white" iconColor="white" />
+          <Logo className="logo" textColor="white" color="white" />
           <div className="nav-actions">
             <button onClick={() => setShowSignIn(true)} className="btn-text">
               Sign In

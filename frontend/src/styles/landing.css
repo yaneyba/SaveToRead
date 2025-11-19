@@ -53,28 +53,14 @@
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1.5rem;
-  font-weight: 700;
   flex-shrink: 0;
   color: white;
 }
 
-.logo-icon {
-  color: #FF6F26;
-  flex-shrink: 0;
-}
-
 @media (max-width: 640px) {
   .logo {
-    font-size: 1.25rem;
+    /* Responsive sizing handled by LogoWordmark component */
   }
-}
-
-.logo-icon {
-  font-size: 2rem;
 }
 
 .nav-actions {

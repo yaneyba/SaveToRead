@@ -5,7 +5,7 @@
  */
 
 import { useState } from 'react';
-import { LogoWordmark } from '@/components/Logo';
+import { Logo } from '@/components/Logo';
 import { InfoModal } from '@/components/InfoModal';
 import { useAuth } from '@/hooks/useAuth';
 import '@/styles/modal.css';
@@ -65,7 +65,7 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
           )}
 
           <a href="/" className="header-logo">
-            <LogoWordmark textColor="#FF6F26" iconColor="#FF6F26" />
+            <Logo textColor="#FF6F26" color="#FF6F26" />
           </a>
         </div>
 
