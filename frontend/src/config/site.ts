@@ -7,7 +7,7 @@
 export const SITE_CONFIG = {
   // Pagination settings
   pagination: {
-    defaultPageSize: 12,
+    defaultPageSize: 6,
     pageSizeOptions: [6, 12, 24, 48],
   },
 
