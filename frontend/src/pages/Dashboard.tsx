@@ -9,6 +9,7 @@ import { useArticles } from '@/hooks/useArticles';
 import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
 import { Toast } from '@/components/Toast';
+import { Modal, ModalActions, ModalButton } from '@/components/Modal';
 import type { Article } from '@savetoread/shared';
 import { AddArticleForm } from '@/components/dashboard/AddArticleForm';
 import { DashboardControls } from '@/components/dashboard/DashboardControls';
@@ -26,6 +27,10 @@ export function Dashboard() {
   const [activeFilter, setActiveFilter] = useState<'all' | 'favorites' | 'unread'>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; articleId: string | null }>({
+    isOpen: false,
+    articleId: null
+  });
 
   // Listen for articles saved from extension
   useEffect(() => {
@@ -62,13 +67,20 @@ export function Dashboard() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this article?')) return;
+  const handleDelete = (id: string) => {
+    setDeleteModal({ isOpen: true, articleId: id });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteModal.articleId) return;
 
     try {
-      await deleteArticle(id);
+      await deleteArticle(deleteModal.articleId);
+      setToast({ message: 'Article deleted successfully', type: 'success' });
+      setDeleteModal({ isOpen: false, articleId: null });
     } catch (err) {
       console.error('Failed to delete article:', err);
+      setToast({ message: 'Failed to delete article', type: 'error' });
     }
   };
 
@@ -178,6 +190,31 @@ export function Dashboard() {
           onClose={() => setToast(null)}
         />
       )}
+
+      {/* Delete confirmation modal */}
+      <Modal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, articleId: null })}
+        title="Delete Article?"
+        subtitle="This action cannot be undone. The article will be permanently removed from your library."
+        type="danger"
+        size="sm"
+      >
+        <ModalActions align="space-between">
+          <ModalButton
+            variant="ghost"
+            onClick={() => setDeleteModal({ isOpen: false, articleId: null })}
+          >
+            Cancel
+          </ModalButton>
+          <ModalButton
+            variant="danger"
+            onClick={confirmDelete}
+          >
+            Delete
+          </ModalButton>
+        </ModalActions>
+      </Modal>
     </div>
   );
 }
