@@ -27,6 +27,8 @@ import {
   analyzeContent
 } from '../services/content-analysis';
 import { extractArticleContent } from '../services/content-extraction';
+import { generateFolderPath } from '../utils/folder-path';
+import { verifySnapshotIntegrity } from '../utils/integrity-check';
 
 const app = new Hono<{ Bindings: Env; Variables: { userId?: string } }>();
 
@@ -621,6 +623,147 @@ app.post('/:id/snapshot', async (c) => {
 });
 
 /**
+ * Generate snapshot preview (temporary, expires in 1 hour)
+ */
+app.post('/:id/snapshot/preview', async (c) => {
+  const userId = c.get('userId');
+  if (!userId) {
+    return c.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'User not authenticated' } }, 401);
+  }
+
+  try {
+    const articleId = c.req.param('id');
+    const { format = 'pdf' } = await c.req.json<{ format?: 'pdf' | 'html' }>();
+
+    // Get article
+    const articleData = await c.env.ARTICLES.get(`article:${articleId}`);
+    if (!articleData) {
+      return c.json({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Article not found' }
+      }, 404);
+    }
+
+    const article: Article = JSON.parse(articleData);
+
+    // Verify ownership
+    if (article.userId !== userId) {
+      return c.json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'Access denied' }
+      }, 403);
+    }
+
+    // Get user settings for styling
+    const settingsKey = `user:${userId}:settings`;
+    const settingsData = await c.env.USERS.get(settingsKey);
+    const settings = settingsData ? JSON.parse(settingsData) : null;
+
+    // Generate snapshot
+    const browser = await puppeteer.launch(c.env.BROWSER);
+
+    try {
+      let snapshotResult;
+
+      if (format === 'pdf') {
+        snapshotResult = await generatePdfSnapshot(
+          article.url,
+          article.title || 'Untitled',
+          browser,
+          settings?.snapshot?.customStyling
+        );
+      } else {
+        snapshotResult = await generateHtmlSnapshot(
+          article.url,
+          article.title || 'Untitled',
+          browser,
+          {
+            embedAssets: settings?.snapshot?.embedAssets ?? true,
+            includeStyles: true
+          }
+        );
+      }
+
+      // Generate preview ID
+      const previewId = crypto.randomUUID();
+
+      // Store preview temporarily in KV with 1 hour expiration
+      await c.env.ARTICLES.put(
+        `preview:${previewId}`,
+        typeof snapshotResult.content === 'string'
+          ? snapshotResult.content
+          : btoa(String.fromCharCode(...snapshotResult.content)),
+        { expirationTtl: 3600 } // 1 hour
+      );
+
+      // Generate preview URL
+      const previewUrl = `/api/articles/preview/${previewId}`;
+      const expiresAt = new Date(Date.now() + 3600000).toISOString();
+
+      return c.json({
+        success: true,
+        data: {
+          articleId,
+          format,
+          previewUrl,
+          previewId,
+          expiresAt,
+          size: snapshotResult.size,
+          filename: snapshotResult.filename
+        }
+      });
+    } finally {
+      await browser.close();
+    }
+  } catch (error) {
+    console.error('Generate preview error:', error);
+    return c.json({
+      success: false,
+      error: {
+        code: 'PREVIEW_ERROR',
+        message: error instanceof Error ? error.message : 'Failed to generate preview'
+      }
+    }, 500);
+  }
+});
+
+/**
+ * Get snapshot preview content
+ */
+app.get('/preview/:previewId', async (c) => {
+  try {
+    const previewId = c.req.param('previewId');
+
+    const previewData = await c.env.ARTICLES.get(`preview:${previewId}`);
+
+    if (!previewData) {
+      return c.json({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Preview not found or expired' }
+      }, 404);
+    }
+
+    // Determine content type from preview data
+    const isPdf = previewData.startsWith('%PDF');
+    const contentType = isPdf ? 'application/pdf' : 'text/html';
+
+    // Return raw content
+    return new Response(previewData, {
+      headers: {
+        'Content-Type': contentType,
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    });
+  } catch (error) {
+    console.error('Get preview error:', error);
+    return c.json({
+      success: false,
+      error: { code: 'PREVIEW_ERROR', message: 'Failed to get preview' }
+    }, 500);
+  }
+});
+
+/**
  * Batch snapshot generation
  */
 app.post('/batch/snapshot', async (c) => {
@@ -817,6 +960,11 @@ async function processBatchSnapshots(
 ): Promise<void> {
   const browser = format === 'pdf' || format === 'html' ? await puppeteer.launch(env.BROWSER) : null;
 
+  // Get user settings for folder structure
+  const settingsKey = `user:${userId}:settings`;
+  const settingsData = await env.USERS.get(settingsKey);
+  const settings = settingsData ? JSON.parse(settingsData) : null;
+
   try {
     for (const articleId of articleIds) {
       try {
@@ -825,6 +973,17 @@ async function processBatchSnapshots(
 
         const article: Article = JSON.parse(articleData);
         if (article.userId !== userId) continue;
+
+        // Generate folder path based on user preferences
+        const folderPath = generateFolderPath(
+          {
+            title: article.title || 'Untitled',
+            url: article.url,
+            tags: article.tags,
+            createdAt: article.createdAt
+          },
+          settings?.snapshot?.folderStructure
+        );
 
         let snapshotResult;
 
@@ -835,7 +994,7 @@ async function processBatchSnapshots(
               article.url,
               article.title || 'Untitled',
               browser,
-              styling
+              styling || settings?.snapshot?.customStyling
             );
             break;
 
@@ -845,7 +1004,10 @@ async function processBatchSnapshots(
               article.url,
               article.title || 'Untitled',
               browser,
-              { embedAssets: true, includeStyles: true }
+              {
+                embedAssets: settings?.snapshot?.embedAssets ?? true,
+                includeStyles: true
+              }
             );
             break;
 
@@ -900,7 +1062,7 @@ async function processBatchSnapshots(
                   snapshotResult.filename,
                   snapshotResult.mimeType,
                   snapshotResult.content,
-                  '/SaveToRead/snapshots'
+                  folderPath // Use dynamic folder path
                 );
 
                 // Update article
@@ -943,6 +1105,17 @@ async function generateAutomaticSnapshot(
       snapshotSettings.defaultFormat === 'both'
         ? ['pdf', 'html']
         : [snapshotSettings.defaultFormat];
+
+    // Generate folder path based on user preferences
+    const folderPath = generateFolderPath(
+      {
+        title: article.title || 'Untitled',
+        url: article.url,
+        tags: article.tags,
+        createdAt: article.createdAt
+      },
+      snapshotSettings.folderStructure
+    );
 
     // Launch browser once for both formats if needed
     const browser = await puppeteer.launch(env.BROWSER);
@@ -987,14 +1160,37 @@ async function generateAutomaticSnapshot(
                 const tokens = JSON.parse(encryptedTokens);
                 const { uploadToCloudStorage } = await import('../services/oauth/storage-upload');
 
+                // Upload to dynamically generated folder path
                 const uploadResult = await uploadToCloudStorage(
                   activeConnection.provider,
                   tokens.access_token,
                   snapshotResult.filename,
                   snapshotResult.mimeType,
                   snapshotResult.content,
-                  '/SaveToRead/snapshots'
+                  folderPath // Use dynamic folder path
                 );
+
+                // Verify integrity if enabled
+                let integrityCheck;
+                if (snapshotSettings.verifyIntegrity && uploadResult.webViewLink) {
+                  integrityCheck = await verifySnapshotIntegrity(
+                    article.id,
+                    uploadResult.webViewLink,
+                    snapshotResult.content,
+                    snapshotResult.size
+                  );
+
+                  // Log integrity check result
+                  console.log(`Integrity check for ${article.id} (${format}):`, integrityCheck.isValid ? 'PASSED' : 'FAILED');
+
+                  // Store integrity check result
+                  if (integrityCheck) {
+                    await env.ARTICLES.put(
+                      `integrity:${article.id}:${format}`,
+                      JSON.stringify(integrityCheck)
+                    );
+                  }
+                }
 
                 // Update article with snapshot URL
                 const articleData = await env.ARTICLES.get(`article:${article.id}`);

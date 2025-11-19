@@ -1,12 +1,105 @@
 # SaveToRead Implementation Progress
 
-**Last Updated:** 2025-01-18
-**Branch:** `main`
-**Overall Progress:** 26/57 items completed (46%)
+**Last Updated:** 2025-11-19
+**Branch:** `claude/audit-codebase-015y3nPRTkHVuZNP8WUN6SAP`
+**Overall Progress:** 35/57 items completed (61%)
 
 ---
 
-## ✅ Recent Updates (January 18, 2025)
+## ✅ Recent Updates (November 19, 2025) - Phase 1: Core Stability
+
+### Automatic Snapshot Generation (NEW!)
+- ✅ **Configurable Automatic Snapshots on Article Save**
+  - Added `SnapshotSettings` to user settings with:
+    - `autoGenerate`: Toggle automatic snapshot generation
+    - `defaultFormat`: PDF, HTML, or both
+    - `uploadToCloud`: Automatically upload to user's cloud storage
+    - `embedAssets`: Include embedded images in HTML snapshots
+    - `previewBeforeSave`: Option to preview before cloud upload
+    - `customStyling`: Font size, family, line height, theme (light/dark/sepia)
+    - `verifyIntegrity`: Verify uploads with checksum validation
+  - Snapshots generated asynchronously without blocking article creation
+  - Enhanced `generateAutomaticSnapshot()` helper function
+  - **Location:** `workers/src/routes/articles.ts` (lines 935-1061)
+
+### Configurable Cloud Storage Folder Structure (NEW!)
+- ✅ **Dynamic Folder Path Generation**
+  - Added `CloudStorageFolderStructure` type with organization strategies:
+    - `date`: Organize by year/month (configurable format)
+    - `domain`: Organize by article source domain
+    - `tags`: Organize by article tags
+    - `flat`: All files in root SaveToRead folder
+    - `custom`: Template-based paths like `{year}/{month}/{domain}/{title}`
+  - `generateFolderPath()` utility function with template parsing
+  - Automatic domain extraction from URLs
+  - Folder name sanitization for cross-platform compatibility
+  - Applied to automatic snapshots, batch snapshots, and manual snapshot endpoints
+  - **Location:** `workers/src/utils/folder-path.ts`
+
+### Snapshot Integrity Verification (NEW!)
+- ✅ **SHA-256 Checksum Validation**
+  - `calculateChecksum()`: Generate SHA-256 hash of snapshot content
+  - `verifySnapshotIntegrity()`: Fetch and validate uploaded files
+  - `verifySnapshotSize()`: Quick size-based validation (1% tolerance)
+  - Integrity check results stored in KV: `integrity:{articleId}:{format}`
+  - New endpoint: `GET /api/storage/integrity/:articleId` - Retrieve all checks
+  - Automatic verification after cloud upload (if enabled in settings)
+  - Logs integrity results (PASSED/FAILED) for debugging
+  - **Location:** `workers/src/utils/integrity-check.ts`
+
+### Storage Quota Monitoring (NEW!)
+- ✅ **Real-time Quota Status with Warnings**
+  - New endpoint: `GET /api/storage/quota` - Get quota for all connections
+  - Returns:
+    - `used` and `total` bytes
+    - `percentage` (0-100)
+    - `warning` flag if ≥80% used
+    - `critical` flag if ≥95% used
+    - `lastChecked` timestamp
+  - Existing `/api/storage/:id/sync-quota` endpoint updated
+  - Frontend can display warnings/alerts based on quota status
+  - **Location:** `workers/src/routes/storage.ts` (lines 334-378)
+
+### Snapshot Preview (NEW!)
+- ✅ **Temporary Snapshot Preview Before Cloud Upload**
+  - New endpoint: `POST /api/articles/:id/snapshot/preview` - Generate preview
+  - New endpoint: `GET /api/articles/preview/:previewId` - Retrieve preview
+  - Previews stored temporarily in KV with 1-hour expiration
+  - Supports PDF and HTML formats
+  - Uses user's custom styling settings for preview generation
+  - Returns:
+    - `previewUrl`: Temporary URL to view snapshot
+    - `previewId`: Unique identifier
+    - `expiresAt`: Expiration timestamp
+    - `size` and `filename`: Snapshot metadata
+  - **Location:** `workers/src/routes/articles.ts` (lines 628-764)
+
+### Enhanced Batch Snapshot Generation
+- ✅ **Batch Operations with New Features**
+  - Updated `processBatchSnapshots()` to use:
+    - Dynamic folder path generation (respects user settings)
+    - Custom styling from user settings
+    - Embed assets preference from settings
+  - Batch size limit: 50 articles maximum
+  - Existing endpoint: `POST /api/articles/batch/snapshot`
+  - Processed asynchronously with per-article error handling
+  - **Location:** `workers/src/routes/articles.ts` (lines 954-1095)
+
+### Updated Type Definitions
+- ✅ **New Shared Types for Phase 1 Features**
+  - `SnapshotSettings`: Complete snapshot configuration
+  - `CloudStorageFolderStructure`: Folder organization options
+  - `BatchSnapshotRequest`: Batch operation input
+  - `SnapshotJob`: Job tracking for batch operations
+  - `SnapshotPreview`: Preview metadata
+  - `StorageQuota`: Quota status with warnings
+  - `StorageIntegrityCheck`: Integrity validation results
+  - All types exported from `@savetoread/shared`
+  - **Location:** `shared/src/types/index.ts`
+
+---
+
+## ✅ Previous Updates (January 18, 2025)
 
 ### Article Content Extraction (NEW!)
 - ✅ **Automatic Content Fetching from URLs**

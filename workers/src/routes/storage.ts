@@ -328,4 +328,103 @@ app.post('/connections/:connectionId/sync', async (c) => {
   }
 });
 
+/**
+ * Get quota status with warnings for all connections
+ */
+app.get('/quota', async (c) => {
+  const userId = c.get('userId');
+  if (!userId) {
+    return c.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'User not authenticated' } }, 401);
+  }
+
+  try {
+    const connectionsKey = `user:${userId}:storage:connections`;
+    const connectionsData = await c.env.USERS.get(connectionsKey);
+
+    if (!connectionsData) {
+      return c.json({ success: true, data: [] });
+    }
+
+    const connections = JSON.parse(connectionsData);
+    const quotaStatuses = [];
+
+    for (const connection of connections) {
+      if (!connection.isActive) continue;
+
+      const percentage = connection.quotaTotal
+        ? Math.round((connection.quotaUsed / connection.quotaTotal) * 100)
+        : 0;
+
+      quotaStatuses.push({
+        providerId: connection.id,
+        provider: connection.provider,
+        used: connection.quotaUsed || 0,
+        total: connection.quotaTotal || 0,
+        percentage,
+        warning: percentage >= 80 && percentage < 95,
+        critical: percentage >= 95,
+        lastChecked: connection.lastSyncAt || connection.updatedAt
+      });
+    }
+
+    return c.json({ success: true, data: quotaStatuses });
+  } catch (error) {
+    console.error('Get quota error:', error);
+    return c.json({
+      success: false,
+      error: { code: 'QUOTA_ERROR', message: 'Failed to get quota information' }
+    }, 500);
+  }
+});
+
+/**
+ * Get integrity check results for an article
+ */
+app.get('/integrity/:articleId', async (c) => {
+  const userId = c.get('userId');
+  if (!userId) {
+    return c.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'User not authenticated' } }, 401);
+  }
+
+  try {
+    const articleId = c.req.param('articleId');
+
+    // Verify article ownership
+    const articleData = await c.env.ARTICLES.get(`article:${articleId}`);
+    if (!articleData) {
+      return c.json({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Article not found' }
+      }, 404);
+    }
+
+    const article = JSON.parse(articleData);
+    if (article.userId !== userId) {
+      return c.json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'Access denied' }
+      }, 403);
+    }
+
+    // Get integrity check results
+    const formats = ['pdf', 'html', 'epub', 'markdown', 'text'];
+    const checks = [];
+
+    for (const format of formats) {
+      const checkData = await c.env.ARTICLES.get(`integrity:${articleId}:${format}`);
+      if (checkData) {
+        checks.push(JSON.parse(checkData));
+      }
+    }
+
+    return c.json({ success: true, data: checks });
+  } catch (error) {
+    console.error('Get integrity error:', error);
+    return c.json({
+      success: false,
+      error: { code: 'INTEGRITY_ERROR', message: 'Failed to get integrity checks' }
+    }, 500);
+  }
+});
+
 export { app as storageRoutes };

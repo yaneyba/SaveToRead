@@ -34,6 +34,19 @@ app.get('/', async (c) => {
         email: true,
         push: false,
         digest: 'weekly'
+      },
+      snapshot: {
+        autoGenerate: false,
+        defaultFormat: 'pdf',
+        uploadToCloud: true,
+        embedAssets: true,
+        previewBeforeSave: false,
+        folderStructure: {
+          organizationStrategy: 'date',
+          dateFormat: 'YYYY-MM',
+          separateByTag: false
+        },
+        verifyIntegrity: true
       }
     };
 
@@ -71,6 +84,19 @@ app.put('/', async (c) => {
         email: true,
         push: false,
         digest: 'weekly'
+      },
+      snapshot: {
+        autoGenerate: false,
+        defaultFormat: 'pdf',
+        uploadToCloud: true,
+        embedAssets: true,
+        previewBeforeSave: false,
+        folderStructure: {
+          organizationStrategy: 'date',
+          dateFormat: 'YYYY-MM',
+          separateByTag: false
+        },
+        verifyIntegrity: true
       }
     };
 

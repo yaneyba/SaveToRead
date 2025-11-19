@@ -248,6 +248,7 @@ export interface SnapshotSettings {
   defaultFormat: 'pdf' | 'html' | 'both';
   uploadToCloud: boolean;
   embedAssets: boolean;
+  previewBeforeSave: boolean;
   customStyling?: {
     fontSize?: string;
     fontFamily?: string;
@@ -255,7 +256,15 @@ export interface SnapshotSettings {
     maxWidth?: string;
     theme?: 'light' | 'dark' | 'sepia';
   };
-  organizationStrategy?: 'date' | 'domain' | 'tags' | 'none';
+  folderStructure?: CloudStorageFolderStructure;
+  verifyIntegrity: boolean;
+}
+
+export interface CloudStorageFolderStructure {
+  organizationStrategy: 'date' | 'domain' | 'tags' | 'flat' | 'custom';
+  customPath?: string; // Template: {year}/{month}/{domain}/{title}
+  dateFormat?: 'YYYY-MM' | 'YYYY/MM' | 'YYYY-MM-DD';
+  separateByTag?: boolean; // Create subfolders for each tag
 }
 
 export interface NotificationSettings {
@@ -277,4 +286,68 @@ export interface UserAnalytics {
   tagUsage: Record<string, number>;
   readingStreak: number; // days
   lastReadAt?: string;
+}
+
+// ============================================================================
+// Snapshot Operations
+// ============================================================================
+
+export interface BatchSnapshotRequest {
+  articleIds: string[];
+  format: 'pdf' | 'html' | 'epub' | 'markdown' | 'text';
+  uploadToCloud?: boolean;
+  embedAssets?: boolean;
+}
+
+export interface SnapshotJob {
+  id: string;
+  userId: string;
+  articleId: string;
+  format: 'pdf' | 'html' | 'epub' | 'markdown' | 'text';
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  progress: number; // 0-100
+  resultUrl?: string;
+  error?: string;
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
+}
+
+export interface BatchSnapshotResponse {
+  jobId: string;
+  totalArticles: number;
+  jobs: SnapshotJob[];
+}
+
+export interface SnapshotPreview {
+  articleId: string;
+  format: 'pdf' | 'html';
+  previewUrl: string; // Temporary URL for preview
+  expiresAt: string;
+  size: number;
+}
+
+// ============================================================================
+// Storage Quota
+// ============================================================================
+
+export interface StorageQuota {
+  providerId: string;
+  provider: StorageProvider;
+  used: number; // bytes
+  total: number; // bytes
+  percentage: number; // 0-100
+  warning: boolean; // true if > 80%
+  critical: boolean; // true if > 95%
+  lastChecked: string;
+}
+
+export interface StorageIntegrityCheck {
+  articleId: string;
+  snapshotUrl: string;
+  originalSize: number;
+  verifiedSize: number;
+  checksum: string;
+  isValid: boolean;
+  checkedAt: string;
 }
