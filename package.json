@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "npm run dev --workspace=frontend",
     "dev:workers": "npm run dev --workspace=workers",
+    "dev:all": "npm run dev:workers & npm run dev",
     "build": "npm run build --workspaces && cp -r frontend/dist dist",
     "type-check": "npm run type-check --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
