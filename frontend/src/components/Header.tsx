@@ -11,7 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import '@/styles/modal.css';
 
 export function Header() {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [modalInfo, setModalInfo] = useState<{ title: string; message: string } | null>(null);
 
