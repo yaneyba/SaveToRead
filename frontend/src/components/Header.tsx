@@ -65,7 +65,7 @@ export function Header({ onMenuClick, showMenu = false }: HeaderProps) {
           )}
 
           <a href="/" className="header-logo">
-            <Logo textColor="#FF6F26" color="#FF6F26" />
+            <Logo />
           </a>
         </div>
 

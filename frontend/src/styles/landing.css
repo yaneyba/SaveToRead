@@ -52,6 +52,15 @@
   gap: 1rem;
 }
 
+/* Override logo colors for dark backgrounds */
+.hero-nav svg path {
+  fill: white !important;
+}
+
+.hero-nav span {
+  color: white !important;
+}
+
 .logo {
   flex-shrink: 0;
   color: white;

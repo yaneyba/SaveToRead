@@ -40,7 +40,7 @@ export function Footer({ variant = 'default' }: FooterProps) {
         <div className="footer-content">
           {/* Brand Section */}
           <div className="footer-section footer-brand">
-            <Logo className="footer-logo" textColor="#111827" color="#111827" />
+            <Logo />
             <p className="footer-description">
               {FOOTER_CONTENT.description}
             </p>
