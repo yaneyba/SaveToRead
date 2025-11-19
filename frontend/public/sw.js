@@ -4,8 +4,8 @@
  * Handles offline caching, background sync, and push notifications
  */
 
-const CACHE_NAME = 'savetoread-v1';
-const RUNTIME_CACHE = 'savetoread-runtime';
+const CACHE_NAME = 'savetoread-v2';
+const RUNTIME_CACHE = 'savetoread-runtime-v2';
 
 // Resources to cache on install
 const PRECACHE_URLS = [
@@ -33,7 +33,10 @@ self.addEventListener('install', (event) => {
           )
         );
       })
-      .then(() => self.skipWaiting())
+      .then(() => {
+        console.log('[SW] Skip waiting - force activation');
+        return self.skipWaiting();
+      })
   );
 });
 
@@ -47,10 +50,16 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames
             .filter((name) => name !== CACHE_NAME && name !== RUNTIME_CACHE)
-            .map((name) => caches.delete(name))
+            .map((name) => {
+              console.log('[SW] Deleting old cache:', name);
+              return caches.delete(name);
+            })
         );
       })
-      .then(() => self.clients.claim())
+      .then(() => {
+        console.log('[SW] Claiming clients');
+        return self.clients.claim();
+      })
   );
 });
 

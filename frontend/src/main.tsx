@@ -17,6 +17,25 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
     navigator.serviceWorker.register('/sw.js')
       .then(registration => {
         console.log('SW registered:', registration);
+        
+        // Check for updates every 60 seconds
+        setInterval(() => {
+          registration.update();
+        }, 60000);
+        
+        // Listen for updates and auto-reload
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // New service worker available, reload the page
+                console.log('New service worker available, reloading...');
+                window.location.reload();
+              }
+            });
+          }
+        });
       })
       .catch(error => {
         console.error('SW registration failed:', error);
