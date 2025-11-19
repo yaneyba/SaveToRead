@@ -81,9 +81,9 @@ export function Dashboard() {
     );
   });
 
-  // Calculate stats
+  // Calculate stats from pagination total, not current page
   const stats = {
-    total: articles.length,
+    total: pagination?.total || 0,
     favorites: articles.filter(a => a.isFavorite).length,
     unread: articles.filter(a => a.readProgress < 100).length,
     read: articles.filter(a => a.readProgress >= 100).length
