@@ -216,22 +216,31 @@ export function Reader() {
 
       <article className="reader-content">
         <header className="article-header">
+          <div className="article-meta">
+            {article.publishedDate && (
+              <time className="article-date">
+                {new Date(article.publishedDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+            )}
+            {(article.wordCount || article.readingTimeMinutes) && (
+              <div className="article-stats">
+                {article.wordCount && <span>{article.wordCount.toLocaleString()} words</span>}
+                {article.wordCount && article.readingTimeMinutes && <span>•</span>}
+                {article.readingTimeMinutes && <span>{article.readingTimeMinutes} min read</span>}
+              </div>
+            )}
+          </div>
+
           <h1>{article.title}</h1>
-          {article.author && <p className="article-author">By {article.author}</p>}
-          {article.publishedDate && (
-            <p className="article-date">
-              {new Date(article.publishedDate).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
+          
+          {article.author && (
+            <p className="article-author">
+              <span className="author-prefix">By</span> {article.author}
             </p>
-          )}
-          {(article.wordCount || article.readingTimeMinutes) && (
-            <div className="article-stats">
-              {article.wordCount && <span>{article.wordCount.toLocaleString()} words</span>}
-              {article.readingTimeMinutes && <span>{article.readingTimeMinutes} min read</span>}
-            </div>
           )}
         </header>
 
