@@ -4,12 +4,15 @@
  * Handles pagination controls for article lists
  */
 
+import { SITE_CONFIG } from '@/config/site';
+
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
   totalItems: number;
   pageSize: number;
   onPageChange: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
 }
 
 export function Pagination({
@@ -17,9 +20,10 @@ export function Pagination({
   totalPages,
   totalItems,
   pageSize,
-  onPageChange
+  onPageChange,
+  onPageSizeChange
 }: PaginationProps) {
-  if (totalPages <= 1) {
+  if (totalPages <= 1 && !onPageSizeChange) {
     return null;
   }
 
@@ -65,7 +69,24 @@ export function Pagination({
   return (
     <div className="pagination">
       <div className="pagination-info">
-        Showing {startItem}-{endItem} of {totalItems} articles
+        <span>Showing {startItem}-{endItem} of {totalItems} articles</span>
+        {onPageSizeChange && (
+          <div className="pagination-page-size">
+            <label htmlFor="pageSize">Show:</label>
+            <select
+              id="pageSize"
+              value={pageSize}
+              onChange={(e) => {
+                onPageSizeChange(Number(e.target.value));
+                onPageChange(1);
+              }}
+            >
+              {SITE_CONFIG.pagination.pageSizeOptions.map(size => (
+                <option key={size} value={size}>{size}</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="pagination-controls">

@@ -14,12 +14,13 @@ import { AddArticleForm } from '@/components/dashboard/AddArticleForm';
 import { DashboardControls } from '@/components/dashboard/DashboardControls';
 import { ArticlesGrid } from '@/components/dashboard/ArticlesGrid';
 import { Pagination } from '@/components/dashboard/Pagination';
+import { SITE_CONFIG } from '@/config/site';
 import '@/styles/dashboard.css';
 
 export function Dashboard() {
   const { user } = useAuth();
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(12);
+  const [pageSize, setPageSize] = useState<number>(SITE_CONFIG.pagination.defaultPageSize);
   const { articles, loading, error, pagination, createArticle, updateArticle, deleteArticle } = useArticles({ page, pageSize });
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'favorites' | 'unread'>('all');
@@ -148,6 +149,10 @@ export function Dashboard() {
             onPageChange={(newPage) => {
               setPage(newPage);
               window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onPageSizeChange={(newSize) => {
+              setPageSize(newSize);
+              setPage(1);
             }}
           />
         )}
