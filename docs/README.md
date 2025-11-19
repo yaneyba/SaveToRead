@@ -19,6 +19,7 @@ Welcome to the SaveToRead documentation. This directory contains all technical d
 
 ### ✨ Features
 - [CONTENT_EXTRACTION_IMPLEMENTATION.md](features/CONTENT_EXTRACTION_IMPLEMENTATION.md) - Article content extraction system
+- [PAGINATION_AND_UX_IMPROVEMENTS.md](features/PAGINATION_AND_UX_IMPROVEMENTS.md) - Pagination, view modes, real-time sync, and UX polish
 
 ### 🔒 Security
 - [SECURITY.md](security/SECURITY.md) - Security policies and best practices

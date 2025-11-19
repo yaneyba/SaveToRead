@@ -1,14 +1,71 @@
 # SaveToRead Implementation Progress
 
-**Last Updated:** 2025-01-18
+**Last Updated:** 2025-11-29
 **Branch:** `main`
-**Overall Progress:** 26/57 items completed (46%)
+**Overall Progress:** 35/57 items completed (61%)
 
 ---
 
-## ✅ Recent Updates (January 18, 2025)
+## ✅ Recent Updates (November 29, 2025)
 
-### Article Content Extraction (NEW!)
+### Pagination System (NEW!)
+- ✅ **Configurable Pagination with Page Size Selector**
+  - Full pagination controls with first/prev/next/last navigation
+  - Page size selector: 6, 12, 24, 48 articles per page
+  - Default page size: 6 articles (configurable in `config/site.ts`)
+  - Ellipsis display for large page ranges
+  - Click-outside close behavior for page size dropdown
+  - Scroll lock on body when dropdown open (prevents background scroll)
+  - Proper pagination metadata from API (`total`, `page`, `pageSize`, `totalPages`)
+  - Fixed infinite fetch loop with `useRef` for params
+  - Fixed total article count display using API pagination metadata
+  - **Location:** `frontend/src/components/dashboard/Pagination.tsx`
+  - **Configuration:** `frontend/src/config/site.ts`
+
+### View Mode Toggle (NEW!)
+- ✅ **Grid/List View with Mobile Optimization**
+  - Toggle between grid and list view for articles
+  - Grid view: Multi-column responsive layout (default)
+  - List view: Single-column detailed layout
+  - Mobile auto-adapts: Single column regardless of view mode
+  - View state persisted in component state
+  - Toggle buttons with grid/list icons
+  - Responsive breakpoints: 640px, 768px, 1024px
+  - **Location:** `frontend/src/components/dashboard/ArticlesGrid.tsx`
+  - **Styles:** `frontend/src/styles/dashboard.css`
+
+### Real-time Article Sync (NEW!)
+- ✅ **Extension to Dashboard Instant Sync**
+  - Extension sends message to all SaveToRead tabs after article save
+  - Content script dispatches custom event (`savetoread:articleSaved`)
+  - Dashboard listens for event and triggers article refresh
+  - Toast notification appears confirming save
+  - No page refresh required
+  - Seamless user experience across extension and web app
+  - **Location:** `extension/background.js`, `extension/content.js`, `frontend/src/hooks/useArticles.ts`
+
+### Toast Notification System (NEW!)
+- ✅ **Non-intrusive User Feedback**
+  - Toast component with success, error, and info types
+  - Auto-dismiss after 3 seconds (configurable)
+  - Smooth slide-in/fade-out animations
+  - Manual close button
+  - Accessible with proper ARIA labels
+  - Shows on article save, delete, favorite, and errors
+  - **Location:** `frontend/src/components/Toast.tsx`
+  - **Styles:** `frontend/src/styles/toast.css`
+
+### UX Polish & Bug Fixes (NEW!)
+- ✅ **Dropdown & Menu Improvements**
+  - Click-outside detection for page size dropdown
+  - Escape key support for closing user menu
+  - Fixed background scroll when dropdown open (body scroll lock)
+  - User menu closes when clicking outside or pressing Escape
+  - Dropdown menus close when losing focus
+  - `mousedown` event handling for proper click-outside detection
+  - **Location:** `frontend/src/components/Header.tsx`, `frontend/src/components/dashboard/Pagination.tsx`
+
+### Article Content Extraction (January 2025)
 - ✅ **Automatic Content Fetching from URLs**
   - Integrated Jina AI Reader API for intelligent article extraction
   - Extracts title, author, content, excerpt, images, and metadata
