@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { Article, ListArticlesParams, PaginatedResponse } from '@savetoread/shared';
+import type { Article, ListArticlesParams, PaginatedResponse, SaveToReadArticleSavedEvent } from '@savetoread/shared';
 import { useDataProvider } from '@/providers/DataProviderFactory';
 
 export function useArticles(params?: ListArticlesParams) {
@@ -51,15 +51,16 @@ export function useArticles(params?: ListArticlesParams) {
 
   // Listen for article saved from extension - separate effect
   useEffect(() => {
-    const handleArticleSaved = () => {
-      console.log('[SaveToRead] Article saved from extension, refreshing...');
+    const handleArticleSaved = (event: Event) => {
+      const customEvent = event as SaveToReadArticleSavedEvent;
+      console.log('[SaveToRead] Article saved from extension, refreshing...', customEvent.detail);
       fetchArticles();
     };
-    
-    window.addEventListener('savetoread:articleSaved', handleArticleSaved as EventListener);
-    
+
+    window.addEventListener('savetoread:articleSaved', handleArticleSaved);
+
     return () => {
-      window.removeEventListener('savetoread:articleSaved', handleArticleSaved as EventListener);
+      window.removeEventListener('savetoread:articleSaved', handleArticleSaved);
     };
   }, [fetchArticles]);
 

@@ -278,3 +278,39 @@ export interface UserAnalytics {
   readingStreak: number; // days
   lastReadAt?: string;
 }
+
+// ============================================================================
+// Browser Extension Events
+// ============================================================================
+
+/**
+ * Custom event dispatched when article saving starts
+ */
+export interface SaveToReadSavingStartedEvent extends CustomEvent {
+  type: 'savetoread:savingStarted';
+  detail: {
+    url: string;
+    title: string;
+  };
+}
+
+/**
+ * Custom event dispatched when article is successfully saved
+ */
+export interface SaveToReadArticleSavedEvent extends CustomEvent {
+  type: 'savetoread:articleSaved';
+  detail: Article;
+}
+
+/**
+ * Union type for all SaveToRead custom events
+ */
+export type SaveToReadCustomEvent = SaveToReadSavingStartedEvent | SaveToReadArticleSavedEvent;
+
+/**
+ * Extension event type map for type-safe event listeners
+ */
+export interface SaveToReadEventMap {
+  'savetoread:savingStarted': SaveToReadSavingStartedEvent;
+  'savetoread:articleSaved': SaveToReadArticleSavedEvent;
+}

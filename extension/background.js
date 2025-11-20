@@ -188,8 +188,11 @@ async function saveArticle(url, title, autoSnapshot = false, highlight = null) {
   try {
     setBadge('…', '#3b82f6'); // show in-progress badge
 
-    // Notify SaveToRead tabs that saving has started
-    notifySaveToReadTabs('savingStarted', { url, title });
+    // Notify SaveToRead tabs that saving has started (with timeout to not block save)
+    await Promise.race([
+      notifySaveToReadTabs('savingStarted', { url, title }),
+      new Promise(resolve => setTimeout(resolve, 200)) // Max 200ms wait
+    ]);
 
     // Get auth token from storage
     const { authToken } = await chrome.storage.sync.get('authToken');

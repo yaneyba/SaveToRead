@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
 import { Toast } from '@/components/Toast';
 import { Modal, ModalActions, ModalButton } from '@/components/Modal';
-import type { Article } from '@savetoread/shared';
+import type { Article, SaveToReadSavingStartedEvent, SaveToReadArticleSavedEvent } from '@savetoread/shared';
 import { AddArticleForm } from '@/components/dashboard/AddArticleForm';
 import { DashboardControls } from '@/components/dashboard/DashboardControls';
 import { ArticlesGrid } from '@/components/dashboard/ArticlesGrid';
@@ -34,13 +34,15 @@ export function Dashboard() {
 
   // Listen for article saving events from extension
   useEffect(() => {
-    const handleSavingStarted = () => {
-      console.log('[Dashboard] Saving started event received, showing toast');
+    const handleSavingStarted = (event: Event) => {
+      const customEvent = event as SaveToReadSavingStartedEvent;
+      console.log('[Dashboard] Saving started event received, showing toast', customEvent.detail);
       setToast({ message: 'Saving to Read...', type: 'info' });
     };
 
-    const handleArticleSaved = () => {
-      console.log('[Dashboard] Article saved event received, showing toast');
+    const handleArticleSaved = (event: Event) => {
+      const customEvent = event as SaveToReadArticleSavedEvent;
+      console.log('[Dashboard] Article saved event received, showing toast', customEvent.detail);
       setToast({ message: 'Article saved successfully!', type: 'success' });
     };
 
