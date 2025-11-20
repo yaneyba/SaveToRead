@@ -5,6 +5,7 @@ import '@/index.css';
 import '@/styles/header.css';
 import '@/styles/footer.css';
 import '@/styles/toast.css';
+import '@/styles/modal.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

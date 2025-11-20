@@ -8,7 +8,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Logo } from '@/components/Logo';
 import { InfoModal } from '@/components/InfoModal';
 import { useAuth } from '@/hooks/useAuth';
-import '@/styles/modal.css';
 
 export function Header() {
   const { signOut, user } = useAuth();

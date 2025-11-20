@@ -4,7 +4,6 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import '@/styles/modal.css';
 
 interface SignInModalProps {
   mode?: 'signin' | 'signup';
@@ -44,7 +43,7 @@ export function SignInModal({ mode = 'signin', onClose }: SignInModalProps) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content modal-content-md" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>×</button>
 
         <div className="modal-header">
