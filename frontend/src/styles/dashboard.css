@@ -118,6 +118,8 @@
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
+  width: auto !important;
+  height: auto !important;
 }
 
 .add-article-form-modern .add-button:hover:not(:disabled) {
