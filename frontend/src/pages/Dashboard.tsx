@@ -32,17 +32,24 @@ export function Dashboard() {
     articleId: null
   });
 
-  // Listen for articles saved from extension
+  // Listen for article saving events from extension
   useEffect(() => {
+    const handleSavingStarted = () => {
+      console.log('[Dashboard] Saving started event received, showing toast');
+      setToast({ message: 'Saving to Read...', type: 'info' });
+    };
+
     const handleArticleSaved = () => {
       console.log('[Dashboard] Article saved event received, showing toast');
       setToast({ message: 'Article saved successfully!', type: 'success' });
     };
 
+    window.addEventListener('savetoread:savingStarted', handleSavingStarted);
     window.addEventListener('savetoread:articleSaved', handleArticleSaved);
-    console.log('[Dashboard] Listening for savetoread:articleSaved events');
+    console.log('[Dashboard] Listening for savetoread events');
 
     return () => {
+      window.removeEventListener('savetoread:savingStarted', handleSavingStarted);
       window.removeEventListener('savetoread:articleSaved', handleArticleSaved);
     };
   }, []);
