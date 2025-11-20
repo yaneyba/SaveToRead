@@ -78,6 +78,53 @@
   align-items: center;
 }
 
+/* Theme Toggle on Landing Page */
+.hero-nav .theme-toggle {
+  color: white;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.hero-nav .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mobile-menu-theme-toggle {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 0.5rem;
+}
+
+.mobile-menu-theme-toggle .theme-toggle {
+  color: white;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.mobile-menu-theme-toggle .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .hamburger-menu {
   display: none;
   flex-direction: column;

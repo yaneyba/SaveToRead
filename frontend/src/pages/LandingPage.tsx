@@ -9,6 +9,7 @@ import { SignInModal } from '@/components/SignInModal';
 import { Logo } from '@/components/Logo';
 import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
@@ -35,14 +36,15 @@ export function LandingPage() {
         <div className="nav-content">
           <Logo />
           <div className="nav-actions">
+            <ThemeToggle />
             <button onClick={() => setShowSignIn(true)} className="btn-text">
               Sign In
             </button>
             <button onClick={() => setShowSignUp(true)} className="btn-primary">
               Get Started
             </button>
-            <button 
-              onClick={() => setShowMobileMenu(!showMobileMenu)} 
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="hamburger-menu"
               aria-label="Toggle menu"
             >
@@ -61,6 +63,9 @@ export function LandingPage() {
               onClick={() => setShowMobileMenu(false)}
             />
             <div className="mobile-menu">
+              <div className="mobile-menu-theme-toggle">
+                <ThemeToggle />
+              </div>
               <button onClick={() => { setShowSignIn(true); setShowMobileMenu(false); }} className="mobile-menu-item">
                 Sign In
               </button>
