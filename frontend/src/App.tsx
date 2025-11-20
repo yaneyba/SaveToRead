@@ -6,6 +6,7 @@
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/components/AuthProvider';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import { Dashboard } from '@/pages/Dashboard';
 import { Reader } from '@/pages/Reader';
 import { Footer } from '@/components/Footer';
@@ -50,9 +51,11 @@ function AppContent() {
 export function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

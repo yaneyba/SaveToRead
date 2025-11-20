@@ -27,14 +27,15 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--surface-elevated);
   border-radius: 12px;
   width: 100%;
   padding: 1.5rem;
   position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.25s ease-out;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .modal-content-sm {
@@ -80,8 +81,8 @@
 }
 
 .modal-close:hover {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--surface);
+  color: var(--text-primary);
 }
 
 /* Modal Icon */
@@ -124,7 +125,7 @@
 .modal-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   line-height: 1.4;
 }
@@ -139,7 +140,7 @@
 /* Modal Body */
 .modal-body {
   margin-bottom: 1rem;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 0.9375rem;
   line-height: 1.6;
 }
@@ -249,7 +250,9 @@
 .form-input {
   width: 100%;
   padding: 0.625rem 0.875rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
   border-radius: 8px;
   font-size: 0.875rem;
   transition: all 0.2s;
@@ -324,9 +327,9 @@
 
 .modal-divider span {
   position: relative;
-  background: white;
+  background: var(--surface-elevated);
   padding: 0 1rem;
-  color: #9ca3af;
+  color: var(--text-tertiary);
   font-size: 0.875rem;
 }
 
@@ -341,9 +344,9 @@
 .btn-oauth {
   width: 100%;
   padding: 0.625rem 1rem;
-  border: 1px solid #e5e7eb;
-  background: white;
-  color: #374151;
+  border: 1px solid var(--border);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;

@@ -7,6 +7,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Logo } from '@/components/Logo';
 import { InfoModal } from '@/components/InfoModal';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/hooks/useAuth';
 
 export function Header() {
@@ -99,6 +100,8 @@ export function Header() {
               <path d="m21 21-4.35-4.35" />
             </svg>
           </button>
+
+          <ThemeToggle />
 
           <button 
             className="add-button" 

@@ -4,8 +4,9 @@
 
 .reader {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--background);
   position: relative;
+  transition: background-color 0.3s ease;
 }
 
 /* Notification Banner */
@@ -92,14 +93,15 @@
 .reader-header {
   position: sticky;
   top: 0;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--border);
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 100;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .back-button {
@@ -108,9 +110,9 @@
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   background: transparent;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 0.9375rem;
   font-weight: 500;
   cursor: pointer;
@@ -118,8 +120,8 @@
 }
 
 .back-button:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
+  background: var(--surface);
+  border-color: var(--border-hover);
 }
 
 .reader-actions {
@@ -133,9 +135,9 @@
   gap: 0.25rem;
   padding: 0.5rem 0.75rem;
   background: transparent;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
@@ -163,13 +165,13 @@
 .article-header {
   margin-bottom: 3rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
 }
 
 .article-header h1 {
   font-size: 3rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--text-primary);
   line-height: 1.1;
   margin-bottom: 1.5rem;
   letter-spacing: -0.03em;
@@ -223,13 +225,13 @@
 .article-body {
   font-size: 1.125rem;
   line-height: 1.8;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .article-body h1 {
   font-size: 2rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-primary);
   margin: 2.5rem 0 1rem;
   line-height: 1.3;
 }
@@ -237,7 +239,7 @@
 .article-body h2 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-primary);
   margin: 2rem 0 1rem;
   line-height: 1.3;
 }
@@ -245,7 +247,7 @@
 .article-body h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
   margin: 1.75rem 0 0.75rem;
   line-height: 1.4;
 }
@@ -289,7 +291,8 @@
 }
 
 .article-body code {
-  background: #f3f4f6;
+  background: var(--surface);
+  color: var(--text-primary);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-family: 'Monaco', 'Courier New', monospace;

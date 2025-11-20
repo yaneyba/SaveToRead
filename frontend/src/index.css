@@ -1,15 +1,40 @@
 /* Basic styling for SaveToRead app */
 
 :root {
-  --primary-color: #3b82f6;
+  --primary-color: #FF6F26;
+  --primary-hover: #e66520;
   --secondary-color: #8b5cf6;
   --background: #ffffff;
   --surface: #f9fafb;
+  --surface-elevated: #ffffff;
   --text-primary: #111827;
   --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
   --border: #e5e7eb;
+  --border-hover: #d1d5db;
   --error: #ef4444;
   --success: #10b981;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+}
+
+/* Dark theme */
+[data-theme='dark'] {
+  --primary-color: #FF6F26;
+  --primary-hover: #FF8C42;
+  --secondary-color: #a78bfa;
+  --background: #0f172a;
+  --surface: #1e293b;
+  --surface-elevated: #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --border: #334155;
+  --border-hover: #475569;
+  --error: #f87171;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --info: #60a5fa;
 }
 
 * {
@@ -23,6 +48,7 @@ body {
   line-height: 1.5;
   color: var(--text-primary);
   background: var(--background);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app {
