@@ -56,15 +56,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   }
   
+  // Handle saving started notification
+  if (request.action === 'savingStarted') {
+    console.log('[SaveToRead] Saving started, dispatching event');
+    // Dispatch custom event that React can listen to
+    window.dispatchEvent(new CustomEvent('savetoread:savingStarted', {
+      detail: { url: request.url, title: request.title }
+    }));
+    sendResponse({ received: true });
+  }
+
   // Handle article saved notification
   if (request.action === 'articleSaved') {
+    console.log('[SaveToRead] Article saved, dispatching event');
     // Dispatch custom event that React can listen to
     window.dispatchEvent(new CustomEvent('savetoread:articleSaved', {
       detail: request.article
     }));
     sendResponse({ received: true });
   }
-  
+
   return true;
 });
 

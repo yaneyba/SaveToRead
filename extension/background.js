@@ -18,6 +18,47 @@ function setBadge(text, color) {
   }
 }
 
+/**
+ * Notify SaveToRead tabs with improved reliability
+ */
+async function notifySaveToReadTabs(action, data = {}) {
+  try {
+    const tabs = await chrome.tabs.query({});
+    const saveToReadTabs = tabs.filter(tab =>
+      tab.url && (tab.url.includes('savetoread.com') || tab.url.includes('savetoread.pages.dev'))
+    );
+
+    console.log(`[SaveToRead] Notifying ${saveToReadTabs.length} SaveToRead tabs with action: ${action}`);
+
+    const promises = saveToReadTabs.map(async (tab) => {
+      try {
+        // Check if tab is ready (not loading)
+        if (tab.status !== 'complete') {
+          console.log(`[SaveToRead] Tab ${tab.id} not ready, waiting...`);
+          // Wait a bit for tab to be ready
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+        await chrome.tabs.sendMessage(tab.id, { action, ...data });
+        console.log(`[SaveToRead] Successfully notified tab ${tab.id}`);
+        return { success: true, tabId: tab.id };
+      } catch (error) {
+        console.log(`[SaveToRead] Failed to notify tab ${tab.id}:`, error.message);
+        return { success: false, tabId: tab.id, error: error.message };
+      }
+    });
+
+    const results = await Promise.all(promises);
+    const successCount = results.filter(r => r.success).length;
+    console.log(`[SaveToRead] Notification results: ${successCount}/${saveToReadTabs.length} successful`);
+
+    return results;
+  } catch (error) {
+    console.error('[SaveToRead] Error in notifySaveToReadTabs:', error);
+    return [];
+  }
+}
+
 // Load queue from storage on startup
 chrome.storage.local.get('saveQueue', (result) => {
   if (result.saveQueue) {
@@ -71,7 +112,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     } else if (info.menuItemId === 'save-selection-to-read') {
       url = info.pageUrl;
       title = tab?.title || 'Saved Page';
-      
+
       // Get full selection details from content script
       if (tab?.id) {
         try {
@@ -111,9 +152,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     }
 
     // Prevent saving extension pages, chrome pages, and local files
-    if (url.startsWith('chrome://') || 
-        url.startsWith('chrome-extension://') || 
-        url.startsWith('about:') || 
+    if (url.startsWith('chrome://') ||
+        url.startsWith('chrome-extension://') ||
+        url.startsWith('about:') ||
         url.startsWith('file://')) {
       console.log('[SaveToRead] Blocked attempt to save restricted page:', url);
       chrome.notifications.create({
@@ -143,10 +184,16 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
  */
 async function saveArticle(url, title, autoSnapshot = false, highlight = null) {
   console.log('[SaveToRead] Saving article:', { url, title, autoSnapshot, hasHighlight: !!highlight });
-  
+
   try {
     setBadge('…', '#3b82f6'); // show in-progress badge
-    
+
+    // Notify SaveToRead tabs that saving has started (with timeout to not block save)
+    await Promise.race([
+      notifySaveToReadTabs('savingStarted', { url, title }),
+      new Promise(resolve => setTimeout(resolve, 200)) // Max 200ms wait
+    ]);
+
     // Get auth token from storage
     const { authToken } = await chrome.storage.sync.get('authToken');
     console.log('[SaveToRead] Auth token present:', !!authToken);
@@ -242,21 +289,8 @@ async function saveArticle(url, title, autoSnapshot = false, highlight = null) {
         [`notification_${notificationId}`]: result.data.id
       });
 
-      // Notify any open SaveToRead tabs to refresh
-      try {
-        chrome.tabs.query({}, (tabs) => {
-          tabs.forEach((tab) => {
-            if (tab.url && (tab.url.includes('savetoread.com') || tab.url.includes('savetoread.pages.dev'))) {
-              chrome.tabs.sendMessage(tab.id, {
-                action: 'articleSaved',
-                article: result.data
-              }).catch(() => {}); // Ignore if content script not loaded
-            }
-          });
-        });
-      } catch (error) {
-        console.log('Could not notify tabs:', error);
-      }
+      // Notify any open SaveToRead tabs that article was saved successfully
+      await notifySaveToReadTabs('articleSaved', { article: result.data });
 
       // Auto-clear notification after 5 seconds
       setTimeout(() => {
