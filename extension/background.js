@@ -8,6 +8,15 @@ const APP_URL = 'https://savetoread.com';
 
 // Queue for offline saves
 let saveQueue = [];
+const BADGE_CLEAR_DELAY = 4000;
+
+function setBadge(text, color) {
+  chrome.action.setBadgeText({ text });
+  chrome.action.setBadgeBackgroundColor({ color });
+  if (text) {
+    setTimeout(() => chrome.action.setBadgeText({ text: '' }), BADGE_CLEAR_DELAY);
+  }
+}
 
 // Load queue from storage on startup
 chrome.storage.local.get('saveQueue', (result) => {
@@ -46,63 +55,87 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // Handle context menu clicks
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  console.log('[SaveToRead] Context menu clicked:', info.menuItemId);
-  let url = '';
-  let title = '';
-  let highlight = null;
+  try {
+    console.log('[SaveToRead] Context menu clicked:', info.menuItemId);
+    let url = '';
+    let title = '';
+    let highlight = null;
 
-  // Determine URL and title based on context
-  if (info.menuItemId === 'save-link-to-read') {
-    url = info.linkUrl;
-    title = info.selectionText || 'Saved Link';
-  } else if (info.menuItemId === 'save-page-to-read') {
-    url = info.pageUrl;
-    title = tab.title || 'Saved Page';
-  } else if (info.menuItemId === 'save-selection-to-read') {
-    url = info.pageUrl;
-    title = tab.title || 'Saved Page';
-    
-    // Get full selection details from content script
-    try {
-      const response = await chrome.tabs.sendMessage(tab.id, { action: 'getSelectedText' });
-      if (response && response.text) {
+    // Determine URL and title based on context
+    if (info.menuItemId === 'save-link-to-read') {
+      url = info.linkUrl;
+      title = info.selectionText || 'Saved Link';
+    } else if (info.menuItemId === 'save-page-to-read') {
+      url = info.pageUrl;
+      title = tab?.title || 'Saved Page';
+    } else if (info.menuItemId === 'save-selection-to-read') {
+      url = info.pageUrl;
+      title = tab?.title || 'Saved Page';
+      
+      // Get full selection details from content script
+      if (tab?.id) {
+        try {
+          const response = await chrome.tabs.sendMessage(tab.id, { action: 'getSelectedText' });
+          if (response && response.text) {
+            highlight = {
+              text: response.text,
+              context: response.context
+            };
+          }
+        } catch (error) {
+          console.error('Error getting selection:', error);
+          // Fallback to info.selectionText
+          highlight = {
+            text: info.selectionText,
+            context: info.selectionText
+          };
+        }
+      } else {
+        // No tab context available, still save with basic selection text
         highlight = {
-          text: response.text,
-          context: response.context
+          text: info.selectionText,
+          context: info.selectionText
         };
       }
-    } catch (error) {
-      console.error('Error getting selection:', error);
-      // Fallback to info.selectionText
-      highlight = {
-        text: info.selectionText,
-        context: info.selectionText
-      };
     }
-  }
 
-  if (!url) {
-    console.error('No URL found to save');
-    return;
-  }
+    if (!url) {
+      console.error('No URL found to save');
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icons/icon48.png',
+        title: 'SaveToRead',
+        message: 'Could not find a URL to save from this page'
+      });
+      return;
+    }
 
-  // Prevent saving extension pages, chrome pages, and local files
-  if (url.startsWith('chrome://') || 
-      url.startsWith('chrome-extension://') || 
-      url.startsWith('about:') || 
-      url.startsWith('file://')) {
-    console.log('[SaveToRead] Blocked attempt to save restricted page:', url);
+    // Prevent saving extension pages, chrome pages, and local files
+    if (url.startsWith('chrome://') || 
+        url.startsWith('chrome-extension://') || 
+        url.startsWith('about:') || 
+        url.startsWith('file://')) {
+      console.log('[SaveToRead] Blocked attempt to save restricted page:', url);
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icons/icon48.png',
+        title: 'SaveToRead',
+        message: 'Cannot save browser pages or extension pages'
+      });
+      return;
+    }
+
+    // Save the article with optional highlight
+    await saveArticle(url, title, false, highlight);
+  } catch (err) {
+    console.error('[SaveToRead] Failed to handle context menu click:', err);
     chrome.notifications.create({
       type: 'basic',
       iconUrl: 'icons/icon48.png',
       title: 'SaveToRead',
-      message: 'Cannot save browser pages or extension pages'
+      message: 'Could not save page. Please try again.'
     });
-    return;
   }
-
-  // Save the article with optional highlight
-  await saveArticle(url, title, false, highlight);
 });
 
 /**
@@ -112,6 +145,8 @@ async function saveArticle(url, title, autoSnapshot = false, highlight = null) {
   console.log('[SaveToRead] Saving article:', { url, title, autoSnapshot, hasHighlight: !!highlight });
   
   try {
+    setBadge('…', '#3b82f6'); // show in-progress badge
+    
     // Get auth token from storage
     const { authToken } = await chrome.storage.sync.get('authToken');
     console.log('[SaveToRead] Auth token present:', !!authToken);
@@ -186,6 +221,7 @@ async function saveArticle(url, title, autoSnapshot = false, highlight = null) {
     const result = await response.json();
 
     if (result.success) {
+      setBadge('✓', '#10b981'); // success indicator
       // Update notification with success
       let message = highlight 
         ? `✓ Saved with highlight: ${title}`
@@ -231,6 +267,7 @@ async function saveArticle(url, title, autoSnapshot = false, highlight = null) {
     }
   } catch (error) {
     console.error('Error saving article:', error);
+    setBadge('!', '#ef4444'); // error indicator
 
     // If offline, add to queue
     if (!navigator.onLine) {
